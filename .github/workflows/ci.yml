@@ -59,9 +59,9 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@1.81
+        uses: dtolnay/rust-toolchain@1.84.0
         with:
-          targets: wasm32-unknown-unknown
+          targets: wasm32v1-none
       
       - name: Verify Rust version
         run: |
@@ -86,9 +86,9 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             eventhub-contract/target/
-          key: ${{ runner.os }}-rust-1.81-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-rust-1.84-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-rust-1.81-cargo-
+            ${{ runner.os }}-rust-1.84-cargo-
       
       - name: Install Soroban CLI
         run: |
@@ -96,7 +96,7 @@ jobs:
         continue-on-error: true
       
       - name: Build contract
-        run: cargo build --target wasm32-unknown-unknown --release --package event-manager
+        run: cargo build --target wasm32v1-none --release --package event-manager
       
       - name: Run contract tests
         run: cargo test --package event-manager
@@ -105,20 +105,20 @@ jobs:
         run: |
           if command -v soroban &> /dev/null; then
             soroban contract optimize \
-              --wasm target/wasm32-unknown-unknown/release/event_manager.wasm \
-              --wasm-out target/wasm32-unknown-unknown/release/event_manager_optimized.wasm || \
-            cp target/wasm32-unknown-unknown/release/event_manager.wasm \
-               target/wasm32-unknown-unknown/release/event_manager_optimized.wasm
+              --wasm target/wasm32v1-none/release/event_manager.wasm \
+              --wasm-out target/wasm32v1-none/release/event_manager_optimized.wasm || \
+            cp target/wasm32v1-none/release/event_manager.wasm \
+               target/wasm32v1-none/release/event_manager_optimized.wasm
           else
-            cp target/wasm32-unknown-unknown/release/event_manager.wasm \
-               target/wasm32-unknown-unknown/release/event_manager_optimized.wasm
+            cp target/wasm32v1-none/release/event_manager.wasm \
+               target/wasm32v1-none/release/event_manager_optimized.wasm
           fi
       
       - name: Upload WASM artifact
         uses: actions/upload-artifact@v4
         with:
           name: contract-wasm
-          path: eventhub-contract/target/wasm32-unknown-unknown/release/event_manager_optimized.wasm
+          path: eventhub-contract/target/wasm32v1-none/release/event_manager_optimized.wasm
           retention-days: 7
 
   integration-check:
