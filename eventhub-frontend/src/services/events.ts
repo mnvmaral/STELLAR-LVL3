@@ -122,64 +122,41 @@ export const eventsService = {
   createEvent: async (data: CreateEventData): Promise<Event> => {
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    // If blockchain is available and wallet is connected, use it
-    if (useBlockchain) {
-      const walletState = stellarWallet.getState();
-      if (walletState.isConnected && walletState.publicKey) {
-        try {
-          const { eventId, txHash } = await stellarBlockchain.createEvent(data, walletState.publicKey);
-          
-          const newEvent: Event = {
-            ...data,
-            id: `event-${eventId}`,
-            currentParticipants: 0,
-            status: 'upcoming',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          };
-          
-          // Store locally as well for quick access
-          const events: Event[] = JSON.parse(localStorage.getItem(EVENTS_KEY) || '[]');
-          events.push(newEvent);
-          localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
-          
-          addActivity({
-            type: 'event-created',
-            message: `Event "${newEvent.title}" was created on blockchain (TX: ${txHash.substring(0, 8)}...)`,
-            eventId: newEvent.id,
-            eventTitle: newEvent.title,
-          });
-          
-          return newEvent;
-        } catch (error) {
-          console.error('Blockchain create failed:', error);
-          throw error;
-        }
-      }
+    // Blockchain is REQUIRED for event creation
+    const walletState = stellarWallet.getState();
+    if (!walletState.isConnected || !walletState.publicKey) {
+      throw new Error('WALLET_NOT_CONNECTED');
     }
-    
-    // Fallback to local storage
-    const events: Event[] = JSON.parse(localStorage.getItem(EVENTS_KEY) || '[]');
-    const newEvent: Event = {
-      ...data,
-      id: `event-${Date.now()}`,
-      currentParticipants: 0,
-      status: 'upcoming',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    events.push(newEvent);
-    localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
-    
-    addActivity({
-      type: 'event-created',
-      message: `Event "${newEvent.title}" was created`,
-      eventId: newEvent.id,
-      eventTitle: newEvent.title,
-    });
-    
-    return newEvent;
+
+    try {
+      const { eventId, txHash } = await stellarBlockchain.createEvent(data, walletState.publicKey);
+      
+      const newEvent: Event = {
+        ...data,
+        id: `event-${eventId}`,
+        currentParticipants: 0,
+        status: 'upcoming',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      
+      // Store locally as well for quick access/caching
+      const events: Event[] = JSON.parse(localStorage.getItem(EVENTS_KEY) || '[]');
+      events.push(newEvent);
+      localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+      
+      addActivity({
+        type: 'event-created',
+        message: `Event "${newEvent.title}" was created on blockchain (TX: ${txHash.substring(0, 8)}...)`,
+        eventId: newEvent.id,
+        eventTitle: newEvent.title,
+      });
+      
+      return newEvent;
+    } catch (error: any) {
+      console.error('Blockchain create failed:', error);
+      throw error;
+    }
   },
 
   updateEvent: async (data: UpdateEventData): Promise<Event> => {
@@ -247,94 +224,62 @@ export const eventsService = {
     }
     
     if (event.currentParticipants >= event.maxParticipants) {
-      throw new Error('Event is full');
+      throw new Error('EVENT_FULL');
     }
     
     const registrations: Registration[] = JSON.parse(localStorage.getItem(REGISTRATIONS_KEY) || '[]');
     
     // Check if already registered
     if (registrations.find(r => r.eventId === eventId && r.userId === userId && r.status === 'registered')) {
-      throw new Error('Already registered for this event');
+      throw new Error('ALREADY_REGISTERED');
     }
     
-    // Try blockchain registration
-    if (useBlockchain) {
-      const walletState = stellarWallet.getState();
-      if (walletState.isConnected && walletState.publicKey) {
-        try {
-          // Extract numeric event ID from string ID
-          const numericEventId = parseInt(eventId.replace('event-', ''));
-          
-          const { txHash } = await stellarBlockchain.registerForEvent(numericEventId, walletState.publicKey);
-          
-          const newRegistration: Registration = {
-            id: `reg-${Date.now()}`,
-            userId,
-            userName,
-            userEmail,
-            eventId,
-            eventTitle: event.title,
-            registrationDate: new Date().toISOString(),
-            status: 'registered',
-          };
-          
-          registrations.push(newRegistration);
-          localStorage.setItem(REGISTRATIONS_KEY, JSON.stringify(registrations));
-          
-          // Update event participant count
-          event.currentParticipants += 1;
-          const eventIndex = events.findIndex(e => e.id === eventId);
-          events[eventIndex] = event;
-          localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
-          
-          addActivity({
-            type: 'user-registered',
-            message: `${userName} registered for "${event.title}" on blockchain (TX: ${txHash.substring(0, 8)}...)`,
-            userId,
-            userName,
-            eventId,
-            eventTitle: event.title,
-          });
-          
-          return newRegistration;
-        } catch (error) {
-          console.error('Blockchain registration failed:', error);
-          throw error;
-        }
-      }
+    // Blockchain is REQUIRED for registration
+    const walletState = stellarWallet.getState();
+    if (!walletState.isConnected || !walletState.publicKey) {
+      throw new Error('WALLET_NOT_CONNECTED');
     }
-    
-    // Fallback to local storage
-    const newRegistration: Registration = {
-      id: `reg-${Date.now()}`,
-      userId,
-      userName,
-      userEmail,
-      eventId,
-      eventTitle: event.title,
-      registrationDate: new Date().toISOString(),
-      status: 'registered',
-    };
-    
-    registrations.push(newRegistration);
-    localStorage.setItem(REGISTRATIONS_KEY, JSON.stringify(registrations));
-    
-    // Update event participant count
-    event.currentParticipants += 1;
-    const eventIndex = events.findIndex(e => e.id === eventId);
-    events[eventIndex] = event;
-    localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
-    
-    addActivity({
-      type: 'user-registered',
-      message: `${userName} registered for "${event.title}"`,
-      userId,
-      userName,
-      eventId,
-      eventTitle: event.title,
-    });
-    
-    return newRegistration;
+
+    try {
+      // Extract numeric event ID from string ID
+      const numericEventId = parseInt(eventId.replace('event-', ''));
+      
+      const { txHash } = await stellarBlockchain.registerForEvent(numericEventId, walletState.publicKey);
+      
+      const newRegistration: Registration = {
+        id: `reg-${Date.now()}`,
+        userId,
+        userName,
+        userEmail,
+        eventId,
+        eventTitle: event.title,
+        registrationDate: new Date().toISOString(),
+        status: 'registered',
+      };
+      
+      registrations.push(newRegistration);
+      localStorage.setItem(REGISTRATIONS_KEY, JSON.stringify(registrations));
+      
+      // Update event participant count
+      event.currentParticipants += 1;
+      const eventIndex = events.findIndex(e => e.id === eventId);
+      events[eventIndex] = event;
+      localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+      
+      addActivity({
+        type: 'user-registered',
+        message: `${userName} registered for "${event.title}" on blockchain (TX: ${txHash.substring(0, 8)}...)`,
+        userId,
+        userName,
+        eventId,
+        eventTitle: event.title,
+      });
+      
+      return newRegistration;
+    } catch (error: any) {
+      console.error('Blockchain registration failed:', error);
+      throw error;
+    }
   },
 
   cancelRegistration: async (registrationId: string, userId: string): Promise<void> => {

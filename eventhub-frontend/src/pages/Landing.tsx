@@ -38,7 +38,11 @@ export const Landing = () => {
                 </Button>
               </Link>
               <Link to="/signup">
-                <Button size="lg" className="bg-white text-indigo-600 hover:bg-gray-100">
+                <Button 
+                  size="lg" 
+                  variant="primary"
+                  className="!bg-blue-600 !text-white hover:!bg-blue-700 focus:!ring-blue-500 active:!bg-blue-800"
+                >
                   Get Started
                 </Button>
               </Link>

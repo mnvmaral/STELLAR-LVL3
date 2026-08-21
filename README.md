@@ -462,8 +462,8 @@ EventHub includes a comprehensive **GitHub Actions CI pipeline** that runs autom
 - ✅ Upload build artifacts (retained for 7 days)
 
 #### 2. Smart Contract Build & Test
-- ✅ Setup Rust toolchain with `wasm32-unknown-unknown` target
-- ✅ Cache Cargo dependencies for faster builds
+- ✅ Setup Rust toolchain (stable, latest) with `wasm32v1-none` target
+- ✅ Cache Cargo dependencies for faster builds (keyed by Rust version)
 - ✅ Install Soroban CLI
 - ✅ Build contract to optimized WASM
 - ✅ **Run all 9 contract tests** (must pass)
