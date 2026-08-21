@@ -4,7 +4,7 @@
 
 ### Build Status & Deployment
 
-[![CI](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml)
+[![CI](https://github.com/mnvmaral/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mnvmaral/STELLAR-LVL3/actions/workflows/ci.yml)
 [![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-7C4DFF?logo=stellar&logoColor=white)](https://stellar.expert/explorer/testnet/contract/CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE)
 [![Contract Deployed](https://img.shields.io/badge/Contract-Deployed-success?logo=stellar&logoColor=white)](https://stellar.expert/explorer/testnet/contract/CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE)
 
@@ -20,7 +20,7 @@
 ### Project Info
 
 ![License](https://img.shields.io/badge/License-MIT-green?logo=opensourceinitiative&logoColor=white)
-![Last Commit](https://img.shields.io/github/last-commit/manavmaral2006-stack/STELLAR-LVL3?logo=github)
+![Last Commit](https://img.shields.io/github/last-commit/mnvmaral/STELLAR-LVL3?logo=github)
 ![Tests](https://img.shields.io/badge/Tests-9%20Passing-success?logo=checkmarx&logoColor=white)
 
 ---
@@ -450,7 +450,7 @@ EventHub includes a comprehensive **GitHub Actions CI pipeline** that runs autom
 
 **File**: `.github/workflows/ci.yml`
 
-**Status**: [![CI](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml)
+**Status**: [![CI](https://github.com/mnvmaral/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mnvmaral/STELLAR-LVL3/actions/workflows/ci.yml)
 
 ### Pipeline Jobs
 
@@ -758,8 +758,8 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 
 **Manav Maral**
 
-- GitHub: [@manavmaral2006-stack](https://github.com/manavmaral2006-stack)
-- Repository: [STELLAR-LVL3](https://github.com/manavmaral2006-stack/STELLAR-LVL3)
+- GitHub: [@mnvmaral](https://github.com/mnvmaral)
+- Repository: [STELLAR-LVL3](https://github.com/mnvmaral/STELLAR-LVL3)
 
 ---
 
