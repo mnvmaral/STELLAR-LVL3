@@ -65,8 +65,17 @@ jobs:
       
       - name: Verify Rust version
         run: |
-          rustc --version
+          echo "=== Rust Version (verbose) ==="
+          rustc --version --verbose
+          echo ""
+          echo "=== Rustup Show ==="
+          rustup show
+          echo ""
+          echo "=== Installed Targets ==="
           rustup target list --installed
+          echo ""
+          echo "=== Soroban SDK Version from Cargo.lock ==="
+          grep -A 5 'name = "soroban-sdk"' Cargo.lock || echo "Cargo.lock not found or no soroban-sdk entry"
       
       - name: Cache Cargo dependencies
         uses: actions/cache@v4
@@ -77,9 +86,9 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             eventhub-contract/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-rust-1.81-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-
+            ${{ runner.os }}-rust-1.81-cargo-
       
       - name: Install Soroban CLI
         run: |
