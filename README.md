@@ -2,16 +2,28 @@
 
 <div align="center">
 
-![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-7C4DFF?logo=stellar)
-![Soroban](https://img.shields.io/badge/Soroban-Smart%20Contracts-7C4DFF)
-[![CI](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg)](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml)
-![Rust](https://img.shields.io/badge/Rust-1.85-orange?logo=rust)
-![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-8.2-646CFF?logo=vite)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.3-38B2AC?logo=tailwind-css)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Last Commit](https://img.shields.io/github/last-commit/manavmaral2006-stack/STELLAR-LVL3)
+### Build Status & Deployment
+
+[![CI](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml)
+[![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-7C4DFF?logo=stellar&logoColor=white)](https://stellar.expert/explorer/testnet/contract/CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE)
+[![Contract Deployed](https://img.shields.io/badge/Contract-Deployed-success?logo=stellar&logoColor=white)](https://stellar.expert/explorer/testnet/contract/CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE)
+
+### Technology Stack
+
+![Soroban](https://img.shields.io/badge/Soroban-Smart%20Contracts-7C4DFF?logo=stellar&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-1.85+-orange?logo=rust&logoColor=white)
+![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8.2-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.3-38B2AC?logo=tailwind-css&logoColor=white)
+
+### Project Info
+
+![License](https://img.shields.io/badge/License-MIT-green?logo=opensourceinitiative&logoColor=white)
+![Last Commit](https://img.shields.io/github/last-commit/manavmaral2006-stack/STELLAR-LVL3?logo=github)
+![Tests](https://img.shields.io/badge/Tests-9%20Passing-success?logo=checkmarx&logoColor=white)
+
+---
 
 **A decentralized event management platform built on Stellar blockchain with Soroban smart contracts**
 
@@ -432,36 +444,46 @@ Frontend testing is structured but not yet implemented. The CI pipeline validate
 
 ## 🔧 CI/CD Pipeline
 
-EventHub includes a GitHub Actions CI/CD pipeline that runs on every push and pull request.
+EventHub includes a comprehensive **GitHub Actions CI pipeline** that runs automatically on every push and pull request to `main`, `master`, or `develop` branches.
+
+### Workflow: Continuous Integration
+
+**File**: `.github/workflows/ci.yml`
+
+**Status**: [![CI](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml)
 
 ### Pipeline Jobs
 
-**1. Frontend Build & Lint**
-- Setup Node.js 20
-- Install dependencies with `npm ci`
-- Run ESLint for code quality
-- Build production bundle with Vite
-- Upload build artifacts
+#### 1. Frontend Build & Lint
+- ✅ Setup Node.js 20 with npm caching
+- ✅ Install dependencies with `npm ci`
+- ✅ Run ESLint for code quality checks
+- ✅ Build production bundle with Vite
+- ✅ Upload build artifacts (retained for 7 days)
 
-**2. Smart Contract Build & Test**
-- Setup Rust with wasm32-unknown-unknown target
-- Cache Cargo dependencies
-- Install Soroban CLI
-- Build contract to WASM
-- Run all 9 contract tests
-- Optimize WASM binary
-- Upload WASM artifact
+#### 2. Smart Contract Build & Test
+- ✅ Setup Rust toolchain with `wasm32-unknown-unknown` target
+- ✅ Cache Cargo dependencies for faster builds
+- ✅ Install Soroban CLI
+- ✅ Build contract to optimized WASM
+- ✅ **Run all 9 contract tests** (must pass)
+- ✅ Optimize WASM binary
+- ✅ Upload WASM artifact (retained for 7 days)
 
-**3. Integration Validation**
-- Verify `.env.example` exists
-- Check deployment documentation
-- Validate contract ID in environment config
+#### 3. Integration Validation
+- ✅ Verify `.env.example` configuration exists
+- ✅ Check `DEPLOYMENT_SUMMARY.md` documentation
+- ✅ Validate contract ID is configured
+- ✅ Runs after both build jobs complete
 
-### CI Status
+### Continuous Deployment
 
-[![CI](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg)](https://github.com/manavmaral2006-stack/STELLAR-LVL3/actions/workflows/ci.yml)
+**Current Status**: Manual deployment
 
-**Configuration**: `.github/workflows/ci.yml`
+- **Smart Contract**: Already deployed to Stellar Testnet (manual)
+- **Frontend**: Not yet deployed (manual deployment to Vercel pending)
+
+**Note**: CD workflow will be added when frontend deployment is configured.
 
 ---
 
