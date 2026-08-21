@@ -64,6 +64,11 @@ jobs:
           toolchain: "1.81.0"
           targets: wasm32-unknown-unknown
       
+      - name: Verify Rust version
+        run: |
+          rustc --version
+          rustup target list --installed
+      
       - name: Cache Cargo dependencies
         uses: actions/cache@v4
         with:
