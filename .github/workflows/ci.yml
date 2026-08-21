@@ -59,7 +59,7 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@1.84.0
+        uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32v1-none
       
@@ -86,9 +86,9 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             eventhub-contract/target/
-          key: ${{ runner.os }}-rust-1.84-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-rust-stable-wasm32v1-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-rust-1.84-cargo-
+            ${{ runner.os }}-rust-stable-wasm32v1-cargo-
       
       - name: Install Soroban CLI
         run: |
