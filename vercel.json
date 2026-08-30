@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd eventhub-frontend && npm install && npm run build",
+  "devCommand": "cd eventhub-frontend && npm run dev",
+  "installCommand": "cd eventhub-frontend && npm install",
+  "framework": "vite",
+  "outputDirectory": "eventhub-frontend/dist"
+}

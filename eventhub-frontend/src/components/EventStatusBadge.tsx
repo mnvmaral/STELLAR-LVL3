@@ -10,6 +10,7 @@ export const EventStatusBadge = ({ status }: EventStatusBadgeProps) => {
     ongoing: 'bg-pastel-green text-green-800',
     completed: 'bg-pastel-purple text-purple-800',
     cancelled: 'bg-gray-200 text-gray-800',
+    demo: 'bg-yellow-100 text-yellow-800',
   };
 
   return (

@@ -29,9 +29,19 @@ export const EventCard = ({ event, showActions = false, onRegister }: EventCardP
   };
 
   const isFull = event.currentParticipants >= event.maxParticipants;
+  const isDemoEvent = event.status === 'demo';
 
   return (
     <div className="bg-white rounded-custom-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
+      {/* Demo Event Banner */}
+      {isDemoEvent && (
+        <div className="bg-yellow-100 border-b border-yellow-200 px-4 py-2">
+          <p className="text-xs text-yellow-800 font-medium text-center">
+            ⚠️ Demo Event - Not Available for Registration
+          </p>
+        </div>
+      )}
+      
       {/* Cover Image */}
       {event.coverImage && (
         <div className="h-48 overflow-hidden">
@@ -96,7 +106,7 @@ export const EventCard = ({ event, showActions = false, onRegister }: EventCardP
               View Details
             </Button>
           </Link>
-          {showActions && onRegister && (
+          {showActions && onRegister && !isDemoEvent && (
             <Button 
               variant="primary" 
               onClick={() => onRegister(event.id)}

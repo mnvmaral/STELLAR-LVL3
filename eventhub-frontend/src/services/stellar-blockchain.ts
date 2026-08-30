@@ -7,26 +7,24 @@ const RPC_URL = import.meta.env.VITE_STELLAR_RPC_URL;
 const NETWORK_PASSPHRASE = StellarSdk.Networks.TESTNET;
 
 // Create Soroban RPC server instance
-const server = new StellarSdk.SorobanRpc.Server(RPC_URL);
+const server = new StellarSdk.rpc.Server(RPC_URL);
 
 export class StellarBlockchainService {
   /**
    * Create event on-chain
    */
-  async createEvent(data: CreateEventData, organizerAddress: string): Promise<{
+  async createEvent(data: CreateEventData): Promise<{
     eventId: number;
     txHash: string;
   }> {
-    const walletState = stellarWallet.getState();
-    if (!walletState.isConnected || !walletState.publicKey) {
-      throw new Error('WALLET_NOT_CONNECTED');
-    }
-
     try {
-      // Load the source account
+      // Step 1: Ensure wallet is ready and get address (triggers permission flow if needed)
+      const { address: organizerAddress } = await stellarWallet.ensureWalletReady();
+
+      // Step 2: Load the source account
       const sourceAccount = await server.getAccount(organizerAddress);
       
-      // Build the contract call operation
+      // Step 3: Build the contract call operation
       const contract = new StellarSdk.Contract(CONTRACT_ID);
       
       const transaction = new StellarSdk.TransactionBuilder(sourceAccount, {
@@ -49,46 +47,46 @@ export class StellarBlockchainService {
         .setTimeout(30)
         .build();
 
-      // Simulate the transaction
+      // Step 4: Simulate the transaction
       const simulatedTx = await server.simulateTransaction(transaction);
       
-      if (StellarSdk.SorobanRpc.Api.isSimulationError(simulatedTx)) {
+      if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         throw new Error(`Simulation failed: ${simulatedTx.error}`);
       }
 
-      // Prepare the transaction with simulation results
-      const preparedTx = StellarSdk.SorobanRpc.assembleTransaction(
+      // Step 5: Prepare the transaction with simulation results
+      const preparedTx = StellarSdk.rpc.assembleTransaction(
         transaction,
         simulatedTx
       ).build();
 
-      // Sign with wallet
-      const signedXdr = await stellarWallet.signTransaction(preparedTx.toXDR());
+      // Step 6: Sign with wallet (must be called directly in this flow to avoid popup blocking)
+      const signedXdr = await stellarWallet.signTransaction(preparedTx.toXDR(), organizerAddress);
       const signedTx = StellarSdk.TransactionBuilder.fromXDR(
         signedXdr,
         NETWORK_PASSPHRASE
       ) as StellarSdk.Transaction;
 
-      // Submit the transaction
+      // Step 7: Submit the transaction
       const sendResponse = await server.sendTransaction(signedTx);
       
       if (sendResponse.status === 'ERROR') {
         throw new Error(`Transaction failed: ${sendResponse.errorResult}`);
       }
 
-      // Poll for transaction result
+      // Step 8: Poll for transaction result
       const hash = sendResponse.hash;
       let getResponse = await server.getTransaction(hash);
       let attempts = 0;
       const maxAttempts = 30;
 
-      while (getResponse.status === StellarSdk.SorobanRpc.Api.GetTransactionStatus.NOT_FOUND && attempts < maxAttempts) {
+      while (getResponse.status === StellarSdk.rpc.Api.GetTransactionStatus.NOT_FOUND && attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 1000));
         getResponse = await server.getTransaction(hash);
         attempts++;
       }
 
-      if (getResponse.status === StellarSdk.SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
+      if (getResponse.status === StellarSdk.rpc.Api.GetTransactionStatus.SUCCESS) {
         // Extract event ID from result
         const resultValue = getResponse.returnValue;
         const eventId = StellarSdk.scValToNative(resultValue!);
@@ -105,6 +103,14 @@ export class StellarBlockchainService {
       
       if (error.message === 'TRANSACTION_REJECTED') {
         throw new Error('TRANSACTION_REJECTED');
+      } else if (error.message === 'WALLET_NOT_INSTALLED') {
+        throw new Error('WALLET_NOT_INSTALLED');
+      } else if (error.message === 'WALLET_LOCKED') {
+        throw new Error('WALLET_LOCKED');
+      } else if (error.message === 'WRONG_NETWORK') {
+        throw new Error('WRONG_NETWORK');
+      } else if (error.message === 'PERMISSION_DENIED' || error.message === 'CONNECTION_REJECTED') {
+        throw error;
       } else if (error.message?.includes('insufficient')) {
         throw new Error('INSUFFICIENT_BALANCE');
       } else if (error.message?.includes('account not found')) {
@@ -118,20 +124,18 @@ export class StellarBlockchainService {
   /**
    * Register for event on-chain
    */
-  async registerForEvent(eventId: number, participantAddress: string): Promise<{
+  async registerForEvent(eventId: number): Promise<{
     success: boolean;
     txHash: string;
   }> {
-    const walletState = stellarWallet.getState();
-    if (!walletState.isConnected || !walletState.publicKey) {
-      throw new Error('WALLET_NOT_CONNECTED');
-    }
-
     try {
-      // Load the source account
+      // Step 1: Ensure wallet is ready and get address (triggers permission flow if needed)
+      const { address: participantAddress } = await stellarWallet.ensureWalletReady();
+
+      // Step 2: Load the source account
       const sourceAccount = await server.getAccount(participantAddress);
       
-      // Build the contract call
+      // Step 3: Build the contract call
       const contract = new StellarSdk.Contract(CONTRACT_ID);
       
       const transaction = new StellarSdk.TransactionBuilder(sourceAccount, {
@@ -148,10 +152,10 @@ export class StellarBlockchainService {
         .setTimeout(30)
         .build();
 
-      // Simulate the transaction
+      // Step 4: Simulate the transaction
       const simulatedTx = await server.simulateTransaction(transaction);
       
-      if (StellarSdk.SorobanRpc.Api.isSimulationError(simulatedTx)) {
+      if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         const error = simulatedTx.error;
         if (error.includes('Already registered')) {
           throw new Error('ALREADY_REGISTERED');
@@ -161,39 +165,39 @@ export class StellarBlockchainService {
         throw new Error(`Simulation failed: ${error}`);
       }
 
-      // Prepare the transaction
-      const preparedTx = StellarSdk.SorobanRpc.assembleTransaction(
+      // Step 5: Prepare the transaction
+      const preparedTx = StellarSdk.rpc.assembleTransaction(
         transaction,
         simulatedTx
       ).build();
 
-      // Sign with wallet
-      const signedXdr = await stellarWallet.signTransaction(preparedTx.toXDR());
+      // Step 6: Sign with wallet (must be called directly in this flow to avoid popup blocking)
+      const signedXdr = await stellarWallet.signTransaction(preparedTx.toXDR(), participantAddress);
       const signedTx = StellarSdk.TransactionBuilder.fromXDR(
         signedXdr,
         NETWORK_PASSPHRASE
       ) as StellarSdk.Transaction;
 
-      // Submit the transaction
+      // Step 7: Submit the transaction
       const sendResponse = await server.sendTransaction(signedTx);
       
       if (sendResponse.status === 'ERROR') {
         throw new Error(`Transaction failed: ${sendResponse.errorResult}`);
       }
 
-      // Poll for result
+      // Step 8: Poll for result
       const hash = sendResponse.hash;
       let getResponse = await server.getTransaction(hash);
       let attempts = 0;
       const maxAttempts = 30;
 
-      while (getResponse.status === StellarSdk.SorobanRpc.Api.GetTransactionStatus.NOT_FOUND && attempts < maxAttempts) {
+      while (getResponse.status === StellarSdk.rpc.Api.GetTransactionStatus.NOT_FOUND && attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 1000));
         getResponse = await server.getTransaction(hash);
         attempts++;
       }
 
-      if (getResponse.status === StellarSdk.SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
+      if (getResponse.status === StellarSdk.rpc.Api.GetTransactionStatus.SUCCESS) {
         return {
           success: true,
           txHash: hash,
@@ -210,6 +214,121 @@ export class StellarBlockchainService {
         throw new Error('ALREADY_REGISTERED');
       } else if (error.message === 'EVENT_FULL') {
         throw new Error('EVENT_FULL');
+      } else if (error.message === 'WALLET_NOT_INSTALLED') {
+        throw new Error('WALLET_NOT_INSTALLED');
+      } else if (error.message === 'WALLET_LOCKED') {
+        throw new Error('WALLET_LOCKED');
+      } else if (error.message === 'WRONG_NETWORK') {
+        throw new Error('WRONG_NETWORK');
+      } else if (error.message === 'PERMISSION_DENIED' || error.message === 'CONNECTION_REJECTED') {
+        throw error;
+      } else if (error.message?.includes('insufficient')) {
+        throw new Error('INSUFFICIENT_BALANCE');
+      } else if (error.message?.includes('account not found')) {
+        throw new Error('ACCOUNT_NOT_FUNDED');
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Cancel registration for an event on-chain
+   */
+  async cancelRegistration(eventId: number): Promise<{
+    success: boolean;
+    txHash: string;
+  }> {
+    try {
+      // Step 1: Ensure wallet is ready and get address
+      const { address: participantAddress } = await stellarWallet.ensureWalletReady();
+
+      // Step 2: Load the source account
+      const sourceAccount = await server.getAccount(participantAddress);
+      
+      // Step 3: Build the contract call
+      const contract = new StellarSdk.Contract(CONTRACT_ID);
+      
+      const transaction = new StellarSdk.TransactionBuilder(sourceAccount, {
+        fee: StellarSdk.BASE_FEE,
+        networkPassphrase: NETWORK_PASSPHRASE,
+      })
+        .addOperation(
+          contract.call(
+            'cancel_registration',
+            StellarSdk.nativeToScVal(eventId, { type: 'u64' }),
+            StellarSdk.nativeToScVal(participantAddress, { type: 'address' })
+          )
+        )
+        .setTimeout(30)
+        .build();
+
+      // Step 4: Simulate the transaction
+      const simulatedTx = await server.simulateTransaction(transaction);
+      
+      if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
+        const error = simulatedTx.error;
+        if (error.includes('Not registered')) {
+          throw new Error('NOT_REGISTERED');
+        }
+        throw new Error(`Simulation failed: ${error}`);
+      }
+
+      // Step 5: Prepare the transaction
+      const preparedTx = StellarSdk.rpc.assembleTransaction(
+        transaction,
+        simulatedTx
+      ).build();
+
+      // Step 6: Sign with wallet
+      const signedXdr = await stellarWallet.signTransaction(preparedTx.toXDR(), participantAddress);
+      const signedTx = StellarSdk.TransactionBuilder.fromXDR(
+        signedXdr,
+        NETWORK_PASSPHRASE
+      ) as StellarSdk.Transaction;
+
+      // Step 7: Submit the transaction
+      const sendResponse = await server.sendTransaction(signedTx);
+      
+      if (sendResponse.status === 'ERROR') {
+        throw new Error(`Transaction failed: ${sendResponse.errorResult}`);
+      }
+
+      // Step 8: Poll for result
+      const hash = sendResponse.hash;
+      let getResponse = await server.getTransaction(hash);
+      let attempts = 0;
+      const maxAttempts = 30;
+
+      while (getResponse.status === StellarSdk.rpc.Api.GetTransactionStatus.NOT_FOUND && attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        getResponse = await server.getTransaction(hash);
+        attempts++;
+      }
+
+      if (getResponse.status === StellarSdk.rpc.Api.GetTransactionStatus.SUCCESS) {
+        return {
+          success: true,
+          txHash: hash,
+        };
+      } else {
+        throw new Error(`Transaction failed with status: ${getResponse.status}`);
+      }
+    } catch (error: any) {
+      console.error('Cancel registration error:', error);
+      
+      if (error.message === 'TRANSACTION_REJECTED') {
+        throw new Error('TRANSACTION_REJECTED');
+      } else if (error.message === 'NOT_REGISTERED') {
+        throw new Error('NOT_REGISTERED');
+      } else if (error.message === 'WALLET_NOT_INSTALLED') {
+        throw new Error('WALLET_NOT_INSTALLED');
+      } else if (error.message === 'WALLET_LOCKED') {
+        throw new Error('WALLET_LOCKED');
+      } else if (error.message === 'WRONG_NETWORK') {
+        throw new Error('WRONG_NETWORK');
+      } else if (error.message === 'PERMISSION_DENIED' || error.message === 'CONNECTION_REJECTED') {
+        throw error;
       } else if (error.message?.includes('insufficient')) {
         throw new Error('INSUFFICIENT_BALANCE');
       } else if (error.message?.includes('account not found')) {
@@ -241,7 +360,7 @@ export class StellarBlockchainService {
 
       const simulatedTx = await server.simulateTransaction(transaction);
       
-      if (StellarSdk.SorobanRpc.Api.isSimulationError(simulatedTx)) {
+      if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         console.error('Failed to fetch events:', simulatedTx.error);
         return [];
       }
@@ -300,7 +419,7 @@ export class StellarBlockchainService {
 
       const simulatedTx = await server.simulateTransaction(transaction);
       
-      if (StellarSdk.SorobanRpc.Api.isSimulationError(simulatedTx)) {
+      if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         return null;
       }
 
@@ -359,7 +478,7 @@ export class StellarBlockchainService {
 
       const simulatedTx = await server.simulateTransaction(transaction);
       
-      if (StellarSdk.SorobanRpc.Api.isSimulationError(simulatedTx)) {
+      if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         return false;
       }
 
@@ -400,7 +519,7 @@ export class StellarBlockchainService {
 
       const simulatedTx = await server.simulateTransaction(transaction);
       
-      if (StellarSdk.SorobanRpc.Api.isSimulationError(simulatedTx)) {
+      if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         return [];
       }
 
@@ -441,7 +560,7 @@ export class StellarBlockchainService {
 
       const simulatedTx = await server.simulateTransaction(transaction);
       
-      if (StellarSdk.SorobanRpc.Api.isSimulationError(simulatedTx)) {
+      if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         return [];
       }
 

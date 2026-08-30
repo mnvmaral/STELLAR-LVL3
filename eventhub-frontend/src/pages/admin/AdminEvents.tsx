@@ -11,6 +11,7 @@ import { Select } from '../../components/Select';
 import { EventStatusBadge } from '../../components/EventStatusBadge';
 import { ConfirmationDialog } from '../../components/ConfirmationDialog';
 import { Toast } from '../../components/Toast';
+import { TransactionSuccessModal } from '../../components/TransactionSuccessModal';
 import { eventsService } from '../../services/events';
 import type { Event, CreateEventData, EventCategory, TransactionState } from '../../types';
 
@@ -26,6 +27,12 @@ export const AdminEvents = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [transactionState, setTransactionState] = useState<TransactionState>('idle');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [successModal, setSuccessModal] = useState<{ isOpen: boolean; txHash: string; title: string; message: string }>({
+    isOpen: false,
+    txHash: '',
+    title: '',
+    message: '',
+  });
 
   const [formData, setFormData] = useState<CreateEventData>({
     title: '',
@@ -133,48 +140,82 @@ export const AdminEvents = () => {
 
     if (!validateForm()) return;
 
-    // Simulate blockchain transaction flow
-    setTransactionState('wallet-required');
-
-    setTimeout(() => {
+    try {
       setTransactionState('pending');
-
-      setTimeout(async () => {
-        try {
-          if (editingEvent) {
-            await eventsService.updateEvent({ ...formData, id: editingEvent.id });
-            setToast({ message: 'Event updated successfully!', type: 'success' });
-          } else {
-            await eventsService.createEvent(formData);
-            setToast({ message: 'Event created successfully!', type: 'success' });
-          }
-
-          setTransactionState('success');
-          await loadEvents();
-          
-          setTimeout(() => {
-            setModalOpen(false);
-            resetForm();
-            setTransactionState('idle');
-          }, 1000);
-        } catch (error) {
-          setTransactionState('failed');
-          setToast({
-            message: error instanceof Error ? error.message : 'Operation failed',
-            type: 'error',
-          });
-          setTimeout(() => setTransactionState('idle'), 3000);
-        }
-      }, 1500);
-    }, 1000);
+      
+      if (editingEvent) {
+        // Update is localStorage only (no blockchain function exists)
+        await eventsService.updateEvent({ ...formData, id: editingEvent.id });
+        setToast({ message: 'Event updated successfully! (Note: Update is localStorage only, not on-chain)', type: 'success' });
+        setTransactionState('success');
+        await loadEvents();
+        
+        setTimeout(() => {
+          setModalOpen(false);
+          resetForm();
+          setTransactionState('idle');
+        }, 1000);
+      } else {
+        // Create triggers full blockchain flow: check wallet → request permission → sign → submit → confirm
+        const { event, txHash } = await eventsService.createEvent(formData);
+        
+        console.log('✅ Event created with txHash:', txHash);
+        
+        setTransactionState('success');
+        await loadEvents();
+        
+        // Show success modal with transaction hash
+        setSuccessModal({
+          isOpen: true,
+          txHash,
+          title: 'Event Created Successfully!',
+          message: `"${event.title}" has been created and confirmed on the Stellar blockchain.`,
+        });
+        
+        setTimeout(() => {
+          setModalOpen(false);
+          resetForm();
+          setTransactionState('idle');
+        }, 1000);
+      }
+    } catch (error: any) {
+      setTransactionState('failed');
+      
+      // Map error codes to user-friendly messages
+      let errorMessage = 'Operation failed';
+      
+      if (error.message === 'WALLET_NOT_INSTALLED') {
+        errorMessage = 'Freighter wallet not installed. Please install Freighter extension to continue.';
+      } else if (error.message === 'WALLET_LOCKED') {
+        errorMessage = 'Wallet is locked. Please unlock Freighter and try again.';
+      } else if (error.message === 'WRONG_NETWORK') {
+        errorMessage = 'Wrong network selected. Please switch to Stellar Testnet in Freighter.';
+      } else if (error.message === 'PERMISSION_DENIED' || error.message === 'CONNECTION_REJECTED') {
+        errorMessage = 'Wallet connection rejected. Please approve the connection request in Freighter.';
+      } else if (error.message === 'TRANSACTION_REJECTED') {
+        errorMessage = 'Transaction rejected. Please approve the transaction in Freighter to create the event.';
+      } else if (error.message === 'ACCOUNT_NOT_FUNDED') {
+        errorMessage = 'Your Stellar account is not funded. Please fund your account with XLM on Testnet.';
+      } else if (error.message === 'INSUFFICIENT_BALANCE') {
+        errorMessage = 'Insufficient XLM balance to complete the transaction.';
+      } else if (error.message?.includes('Simulation failed')) {
+        errorMessage = `Transaction simulation failed: ${error.message}`;
+      } else {
+        errorMessage = error.message || 'Operation failed. Please try again.';
+      }
+      
+      setToast({ message: errorMessage, type: 'error' });
+      setTimeout(() => setTransactionState('idle'), 3000);
+    }
   };
 
   const handleDelete = async (id: string) => {
     setTransactionState('pending');
 
     try {
+      // Delete is localStorage only (no blockchain function exists)
       await eventsService.deleteEvent(id);
-      setToast({ message: 'Event deleted successfully!', type: 'success' });
+      setToast({ message: 'Event deleted successfully! (Note: Delete is localStorage only, not on-chain)', type: 'success' });
       await loadEvents();
       setDeleteConfirm(null);
       setTransactionState('idle');
@@ -205,6 +246,14 @@ export const AdminEvents = () => {
           onClose={() => setToast(null)}
         />
       )}
+
+      <TransactionSuccessModal
+        isOpen={successModal.isOpen}
+        onClose={() => setSuccessModal({ ...successModal, isOpen: false })}
+        txHash={successModal.txHash}
+        title={successModal.title}
+        message={successModal.message}
+      />
 
       <PageHeader
         title="Events Management"

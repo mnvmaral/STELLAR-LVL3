@@ -283,7 +283,7 @@ EventHub integrates with **Freighter Wallet**, the leading Stellar wallet extens
 ### Wallet Service Features
 
 - **Freighter Detection**: Automatic detection of installed wallet extension
-- **Wallet Connection**: Seamless connection flow with user permission request
+- **Permission Management**: Proper isAllowed()/setAllowed() flow per Freighter API v6
 - **Address Retrieval**: Fetch user's public key for transaction signing
 - **Transaction Signing**: Sign transactions securely via Freighter API
 - **Network Configuration**: Configured for Stellar Testnet
@@ -292,14 +292,20 @@ EventHub integrates with **Freighter Wallet**, the leading Stellar wallet extens
 
 1. User attempts a blockchain operation (create event, register for event)
 2. App checks for Freighter wallet installation
-3. If not connected, prompts user to connect wallet
-4. User approves connection in Freighter
-5. Transaction is prepared and sent to wallet for signing
-6. User reviews and signs transaction in Freighter
-7. Signed transaction is submitted to Stellar network
-8. App displays transaction status (pending → success/failed)
+3. App checks current permission state via `isAllowed()`
+4. If not permitted, calls `setAllowed()` to trigger Freighter permission popup
+5. User approves permission in Freighter
+6. App retrieves address via `getAddress()`
+7. App verifies network is Stellar Testnet
+8. Transaction is prepared and sent to wallet for signing via `signTransaction()`
+9. User reviews and signs transaction in Freighter
+10. Signed transaction is submitted to Stellar network
+11. App polls for transaction confirmation
+12. App displays transaction status and hash (viewable on Stellar Expert)
 
-**Note**: Email/password authentication is used for app login. Wallet connection is only requested when performing blockchain operations.
+**Note**: Email/password authentication is used for app login. Wallet connection is only requested when performing blockchain operations (create event, register for event).
+
+**Test Wallet Address**: GCN3LGJ6NTUM7BMYEI7UEY5D234CRMBO2DEP2TF4C5D7RIXD74J324T2 (funded with 10,000 Testnet XLM)
 
 ---
 

@@ -4,6 +4,7 @@ import { Navbar } from '../components/Navbar';
 import { Button } from '../components/Button';
 import { EventStatusBadge } from '../components/EventStatusBadge';
 import { Toast } from '../components/Toast';
+import { TransactionSuccessModal } from '../components/TransactionSuccessModal';
 import { useAuth } from '../context/AuthContext';
 import { eventsService } from '../services/events';
 import type { Event, TransactionState } from '../types';
@@ -17,6 +18,12 @@ export const EventDetails = () => {
   const [transactionState, setTransactionState] = useState<TransactionState>('idle');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [successModal, setSuccessModal] = useState<{ isOpen: boolean; txHash: string; title: string; message: string }>({
+    isOpen: false,
+    txHash: '',
+    title: '',
+    message: '',
+  });
 
   useEffect(() => {
     const loadEvent = async () => {
@@ -48,34 +55,131 @@ export const EventDetails = () => {
 
     if (!event || !user) return;
 
-    // Simulate wallet flow states
-    setTransactionState('wallet-required');
-    
-    setTimeout(() => {
+    try {
+      // Set state to show we're starting the wallet flow
       setTransactionState('pending');
       
-      setTimeout(async () => {
-        try {
-          await eventsService.registerForEvent(event.id, user.id, user.name, user.email);
-          setTransactionState('success');
-          setToast({ message: 'Successfully registered for event!', type: 'success' });
-          setIsRegistered(true);
-          
-          // Reload event to update participant count
-          const updatedEvent = await eventsService.getEventById(event.id);
-          setEvent(updatedEvent);
-          
-          setTimeout(() => setTransactionState('idle'), 2000);
-        } catch (error) {
-          setTransactionState('failed');
-          setToast({
-            message: error instanceof Error ? error.message : 'Registration failed',
-            type: 'error',
-          });
-          setTimeout(() => setTransactionState('idle'), 3000);
-        }
-      }, 1500);
-    }, 1000);
+      // This will trigger the full flow: check wallet → request permission → get address → verify network → sign → submit → confirm
+      const { registration, txHash } = await eventsService.registerForEvent(event.id, user.id, user.name, user.email);
+      
+      console.log('✅ Registration confirmed with txHash:', txHash);
+      
+      // Only reach here if transaction was confirmed on-chain
+      setTransactionState('success');
+      setIsRegistered(true);
+      
+      // Show success modal with transaction hash
+      setSuccessModal({
+        isOpen: true,
+        txHash,
+        title: 'Registration Successful!',
+        message: `You've successfully registered for "${event.title}". Your registration has been confirmed on the Stellar blockchain.`,
+      });
+      
+      // Reload event to update participant count
+      const updatedEvent = await eventsService.getEventById(event.id);
+      setEvent(updatedEvent);
+      
+      setTimeout(() => setTransactionState('idle'), 2000);
+    } catch (error: any) {
+      setTransactionState('failed');
+      
+      // Map error codes to user-friendly messages
+      let errorMessage = 'Registration failed';
+      
+      if (error.message === 'WALLET_NOT_INSTALLED') {
+        errorMessage = 'Freighter wallet not installed. Please install Freighter extension to continue.';
+      } else if (error.message === 'WALLET_LOCKED') {
+        errorMessage = 'Wallet is locked. Please unlock Freighter and try again.';
+      } else if (error.message === 'WRONG_NETWORK') {
+        errorMessage = 'Wrong network selected. Please switch to Stellar Testnet in Freighter.';
+      } else if (error.message === 'PERMISSION_DENIED' || error.message === 'CONNECTION_REJECTED') {
+        errorMessage = 'Wallet connection rejected. Please approve the connection request in Freighter.';
+      } else if (error.message === 'TRANSACTION_REJECTED') {
+        errorMessage = 'Transaction rejected. Please approve the transaction in Freighter to complete registration.';
+      } else if (error.message === 'ALREADY_REGISTERED') {
+        errorMessage = 'You are already registered for this event.';
+      } else if (error.message === 'EVENT_FULL') {
+        errorMessage = 'Event is full. Registration is no longer available.';
+      } else if (error.message === 'ACCOUNT_NOT_FUNDED') {
+        errorMessage = 'Your Stellar account is not funded. Please fund your account with XLM on Testnet.';
+      } else if (error.message === 'INSUFFICIENT_BALANCE') {
+        errorMessage = 'Insufficient XLM balance to complete the transaction.';
+      } else if (error.message?.includes('Simulation failed')) {
+        errorMessage = `Transaction simulation failed: ${error.message}`;
+      } else {
+        errorMessage = error.message || 'Registration failed. Please try again.';
+      }
+      
+      setToast({ message: errorMessage, type: 'error' });
+      setTimeout(() => setTransactionState('idle'), 3000);
+    }
+  };
+
+  const handleCancelRegistration = async () => {
+    if (!event || !user) return;
+
+    try {
+      setTransactionState('pending');
+      
+      // Find the user's registration
+      const registrations = await eventsService.getUserRegistrations(user.id);
+      const registration = registrations.find(r => r.eventId === event.id && r.status === 'registered');
+      
+      if (registration) {
+        // This will trigger Freighter signing popup and blockchain transaction
+        const { txHash } = await eventsService.cancelRegistration(registration.id, user.id);
+        
+        console.log('✅ Cancellation confirmed with txHash:', txHash);
+        
+        setTransactionState('success');
+        setIsRegistered(false);
+        
+        // Show success modal with transaction hash
+        setSuccessModal({
+          isOpen: true,
+          txHash,
+          title: 'Registration Cancelled!',
+          message: `Your registration for "${event.title}" has been cancelled on the Stellar blockchain.`,
+        });
+        
+        // Reload event to update participant count
+        const updatedEvent = await eventsService.getEventById(event.id);
+        setEvent(updatedEvent);
+      }
+      
+      setTimeout(() => setTransactionState('idle'), 2000);
+    } catch (error: any) {
+      setTransactionState('failed');
+      
+      let errorMessage = 'Cancellation failed';
+      
+      if (error.message === 'WALLET_NOT_INSTALLED') {
+        errorMessage = 'Freighter wallet not installed. Please install Freighter extension to continue.';
+      } else if (error.message === 'WALLET_LOCKED') {
+        errorMessage = 'Wallet is locked. Please unlock Freighter and try again.';
+      } else if (error.message === 'WRONG_NETWORK') {
+        errorMessage = 'Wrong network selected. Please switch to Stellar Testnet in Freighter.';
+      } else if (error.message === 'PERMISSION_DENIED' || error.message === 'CONNECTION_REJECTED') {
+        errorMessage = 'Wallet connection rejected. Please approve the connection request in Freighter.';
+      } else if (error.message === 'TRANSACTION_REJECTED') {
+        errorMessage = 'Transaction rejected. Please approve the transaction in Freighter to cancel registration.';
+      } else if (error.message === 'NOT_REGISTERED') {
+        errorMessage = 'You are not registered for this event.';
+      } else if (error.message === 'ACCOUNT_NOT_FUNDED') {
+        errorMessage = 'Your Stellar account is not funded. Please fund your account with XLM on Testnet.';
+      } else if (error.message === 'INSUFFICIENT_BALANCE') {
+        errorMessage = 'Insufficient XLM balance to complete the transaction.';
+      } else {
+        errorMessage = error.message || 'Cancellation failed. Please try again.';
+      }
+      
+      setToast({
+        message: errorMessage,
+        type: 'error',
+      });
+      setTimeout(() => setTransactionState('idle'), 3000);
+    }
   };
 
   if (loading) {
@@ -113,7 +217,8 @@ export const EventDetails = () => {
   };
 
   const isFull = event.currentParticipants >= event.maxParticipants;
-  const canRegister = isAuthenticated && !isRegistered && !isFull && event.status === 'upcoming';
+  const isDemoEvent = event.status === 'demo';
+  const canRegister = isAuthenticated && !isRegistered && !isFull && event.status === 'upcoming' && !isDemoEvent;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -126,6 +231,14 @@ export const EventDetails = () => {
           onClose={() => setToast(null)}
         />
       )}
+
+      <TransactionSuccessModal
+        isOpen={successModal.isOpen}
+        onClose={() => setSuccessModal({ ...successModal, isOpen: false })}
+        txHash={successModal.txHash}
+        title={successModal.title}
+        message={successModal.message}
+      />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Cover Image */}
@@ -208,10 +321,29 @@ export const EventDetails = () => {
 
           {/* Action Button */}
           <div className="flex flex-col sm:flex-row gap-4">
-            {isRegistered ? (
-              <div className="flex-1 bg-green-50 border border-green-200 rounded-custom p-4 text-center">
-                <p className="text-green-800 font-medium">✓ You're registered for this event</p>
+            {isDemoEvent ? (
+              <div className="flex-1 bg-yellow-50 border border-yellow-200 rounded-custom p-4">
+                <p className="text-yellow-800 font-medium">
+                  ⚠️ Demo Event - Not Available for Registration
+                </p>
+                <p className="text-sm text-yellow-700 mt-1">
+                  This is a demonstration event. Create a real event via Admin panel to enable blockchain registration.
+                </p>
               </div>
+            ) : isRegistered ? (
+              <>
+                <div className="flex-1 bg-green-50 border border-green-200 rounded-custom p-4 text-center">
+                  <p className="text-green-800 font-medium">✓ You're registered for this event</p>
+                </div>
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  onClick={handleCancelRegistration}
+                  transactionState={transactionState}
+                >
+                  Cancel Registration
+                </Button>
+              </>
             ) : canRegister ? (
               <Button
                 size="lg"

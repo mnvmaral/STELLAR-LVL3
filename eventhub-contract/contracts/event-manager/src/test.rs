@@ -294,3 +294,122 @@ fn test_register_for_nonexistent_event() {
     // Try to register for non-existent event
     client.register_for_event(&999, &participant);
 }
+
+#[test]
+fn test_cancel_registration() {
+    let env = Env::default();
+    let contract_id = env.register(EventManager, ());
+    let client = EventManagerClient::new(&env, &contract_id);
+
+    let organizer = Address::generate(&env);
+    let participant = Address::generate(&env);
+    
+    env.mock_all_auths();
+
+    // Create event
+    let event_id = client.create_event(
+        &organizer,
+        &String::from_str(&env, "Cancellable Event"),
+        &String::from_str(&env, "Can be cancelled"),
+        &String::from_str(&env, "Tech"),
+        &String::from_str(&env, "2024-12-01"),
+        &String::from_str(&env, "10:00"),
+        &String::from_str(&env, "Location"),
+        &100,
+    );
+
+    // Register participant
+    client.register_for_event(&event_id, &participant);
+    
+    // Verify registered
+    assert_eq!(client.is_registered(&event_id, &participant), true);
+    let event_before = client.get_event(&event_id).unwrap();
+    assert_eq!(event_before.current_participants, 1);
+
+    // Cancel registration
+    let result = client.cancel_registration(&event_id, &participant);
+    assert_eq!(result, true);
+
+    // Verify not registered anymore
+    assert_eq!(client.is_registered(&event_id, &participant), false);
+    
+    // Verify participant count decreased
+    let event_after = client.get_event(&event_id).unwrap();
+    assert_eq!(event_after.current_participants, 0);
+    
+    // Verify can register again
+    client.register_for_event(&event_id, &participant);
+    assert_eq!(client.is_registered(&event_id, &participant), true);
+}
+
+#[test]
+#[should_panic(expected = "Not registered")]
+fn test_cancel_nonexistent_registration() {
+    let env = Env::default();
+    let contract_id = env.register(EventManager, ());
+    let client = EventManagerClient::new(&env, &contract_id);
+
+    let organizer = Address::generate(&env);
+    let participant = Address::generate(&env);
+    
+    env.mock_all_auths();
+
+    // Create event
+    let event_id = client.create_event(
+        &organizer,
+        &String::from_str(&env, "Event"),
+        &String::from_str(&env, "Description"),
+        &String::from_str(&env, "Tech"),
+        &String::from_str(&env, "2024-12-01"),
+        &String::from_str(&env, "10:00"),
+        &String::from_str(&env, "Location"),
+        &100,
+    );
+
+    // Try to cancel without registering first
+    client.cancel_registration(&event_id, &participant);
+}
+
+#[test]
+fn test_cancel_and_reregister_multiple_times() {
+    let env = Env::default();
+    let contract_id = env.register(EventManager, ());
+    let client = EventManagerClient::new(&env, &contract_id);
+
+    let organizer = Address::generate(&env);
+    let participant = Address::generate(&env);
+    
+    env.mock_all_auths();
+
+    // Create event
+    let event_id = client.create_event(
+        &organizer,
+        &String::from_str(&env, "Flexible Event"),
+        &String::from_str(&env, "Multiple reg/cancel cycles"),
+        &String::from_str(&env, "Tech"),
+        &String::from_str(&env, "2024-12-01"),
+        &String::from_str(&env, "10:00"),
+        &String::from_str(&env, "Location"),
+        &100,
+    );
+
+    // Cycle 1: Register → Cancel
+    client.register_for_event(&event_id, &participant);
+    assert_eq!(client.is_registered(&event_id, &participant), true);
+    client.cancel_registration(&event_id, &participant);
+    assert_eq!(client.is_registered(&event_id, &participant), false);
+
+    // Cycle 2: Register → Cancel
+    client.register_for_event(&event_id, &participant);
+    assert_eq!(client.is_registered(&event_id, &participant), true);
+    client.cancel_registration(&event_id, &participant);
+    assert_eq!(client.is_registered(&event_id, &participant), false);
+
+    // Cycle 3: Register (leave registered)
+    client.register_for_event(&event_id, &participant);
+    assert_eq!(client.is_registered(&event_id, &participant), true);
+    
+    // Final state: participant count should be 1
+    let event = client.get_event(&event_id).unwrap();
+    assert_eq!(event.current_participants, 1);
+}

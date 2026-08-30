@@ -72,7 +72,43 @@ const initializeEvents = () => {
   }
 };
 
+// Clear old demo/fake activities on app load (one-time cleanup for users with stale data)
+const cleanupOldActivities = () => {
+  try {
+    const activities: Activity[] = JSON.parse(localStorage.getItem(ACTIVITIES_KEY) || '[]');
+    
+    // Filter out any activities that reference demo events or have suspicious patterns
+    const cleanedActivities = activities.filter(activity => {
+      // Remove activities for demo/seed events (event-1, event-2, etc.)
+      if (activity.eventId && /^event-\d+$/.test(activity.eventId)) {
+        console.warn(`Removing stale demo activity: ${activity.message}`);
+        return false;
+      }
+      
+      // Keep activities that have actual blockchain confirmation (contain real TX hash pattern)
+      // Real Stellar tx hashes are 64 hex characters
+      if (activity.message.includes('on blockchain') || activity.message.includes('TX:')) {
+        // Only keep if event ID looks like a real blockchain event (just numeric, not event-N)
+        if (activity.eventId && /^event-\d+$/.test(activity.eventId)) {
+          console.warn(`Removing fake blockchain activity: ${activity.message}`);
+          return false;
+        }
+      }
+      
+      return true;
+    });
+    
+    if (cleanedActivities.length !== activities.length) {
+      console.log(`Cleaned ${activities.length - cleanedActivities.length} stale activities`);
+      localStorage.setItem(ACTIVITIES_KEY, JSON.stringify(cleanedActivities));
+    }
+  } catch (e) {
+    console.error('Failed to cleanup activities:', e);
+  }
+};
+
 initializeEvents();
+cleanupOldActivities(); // Run cleanup once on module load
 
 const addActivity = (activity: Omit<Activity, 'id' | 'timestamp'>) => {
   const activities: Activity[] = JSON.parse(localStorage.getItem(ACTIVITIES_KEY) || '[]');
@@ -93,18 +129,20 @@ export const eventsService = {
     if (useBlockchain) {
       try {
         const blockchainEvents = await stellarBlockchain.getAllEvents();
-        // Merge with seed events
-        const localEvents: Event[] = JSON.parse(localStorage.getItem(EVENTS_KEY) || JSON.stringify(seedEvents()));
-        const mergedEvents = [...localEvents];
         
-        // Add blockchain events that aren't already in local
-        blockchainEvents.forEach(be => {
-          if (!mergedEvents.find(le => le.id === be.id)) {
-            mergedEvents.push(be);
-          }
-        });
+        // If we have blockchain events, return ONLY those
+        if (blockchainEvents.length > 0) {
+          return blockchainEvents;
+        }
         
-        return mergedEvents;
+        // If no blockchain events exist yet, show seed events but mark them clearly
+        console.warn('No on-chain events found. Displaying demo seed events (not registerable).');
+        const seedData = seedEvents();
+        // Mark seed events as demo-only
+        return seedData.map(e => ({
+          ...e,
+          status: 'demo' as any, // Mark as demo so UI can disable registration
+        }));
       } catch (error) {
         console.error('Blockchain fetch failed, using local storage:', error);
       }
@@ -119,17 +157,12 @@ export const eventsService = {
     return events.find(e => e.id === id) || null;
   },
 
-  createEvent: async (data: CreateEventData): Promise<Event> => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+  createEvent: async (data: CreateEventData): Promise<{ event: Event; txHash: string }> => {
     // Blockchain is REQUIRED for event creation
-    const walletState = stellarWallet.getState();
-    if (!walletState.isConnected || !walletState.publicKey) {
-      throw new Error('WALLET_NOT_CONNECTED');
-    }
-
     try {
-      const { eventId, txHash } = await stellarBlockchain.createEvent(data, walletState.publicKey);
+      const { eventId, txHash } = await stellarBlockchain.createEvent(data);
+      
+      console.log('✅ Event created on Stellar Testnet:', txHash);
       
       const newEvent: Event = {
         ...data,
@@ -152,7 +185,7 @@ export const eventsService = {
         eventTitle: newEvent.title,
       });
       
-      return newEvent;
+      return { event: newEvent, txHash };
     } catch (error: any) {
       console.error('Blockchain create failed:', error);
       throw error;
@@ -179,7 +212,7 @@ export const eventsService = {
     
     addActivity({
       type: 'event-updated',
-      message: `Event "${events[index].title}" was updated`,
+      message: `Event "${events[index].title}" was updated (localStorage only, not on-chain)`,
       eventId: events[index].id,
       eventTitle: events[index].title,
     });
@@ -207,15 +240,13 @@ export const eventsService = {
     
     addActivity({
       type: 'event-deleted',
-      message: `Event "${event.title}" was deleted`,
+      message: `Event "${event.title}" was deleted (localStorage only, not on-chain)`,
       eventId: event.id,
       eventTitle: event.title,
     });
   },
 
-  registerForEvent: async (eventId: string, userId: string, userName: string, userEmail: string): Promise<Registration> => {
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
+  registerForEvent: async (eventId: string, userId: string, userName: string, userEmail: string): Promise<{ registration: Registration; txHash: string }> => {
     const events: Event[] = JSON.parse(localStorage.getItem(EVENTS_KEY) || '[]');
     const event = events.find(e => e.id === eventId);
     
@@ -227,24 +258,30 @@ export const eventsService = {
       throw new Error('EVENT_FULL');
     }
     
-    const registrations: Registration[] = JSON.parse(localStorage.getItem(REGISTRATIONS_KEY) || '[]');
-    
-    // Check if already registered
-    if (registrations.find(r => r.eventId === eventId && r.userId === userId && r.status === 'registered')) {
-      throw new Error('ALREADY_REGISTERED');
-    }
-    
     // Blockchain is REQUIRED for registration
-    const walletState = stellarWallet.getState();
-    if (!walletState.isConnected || !walletState.publicKey) {
-      throw new Error('WALLET_NOT_CONNECTED');
-    }
-
     try {
       // Extract numeric event ID from string ID
       const numericEventId = parseInt(eventId.replace('event-', ''));
       
-      const { txHash } = await stellarBlockchain.registerForEvent(numericEventId, walletState.publicKey);
+      // CRITICAL: Get wallet address BEFORE checking blockchain registration
+      // This ensures we check the ACTUAL connected wallet, not localStorage user ID
+      const { address: walletAddress } = await stellarWallet.ensureWalletReady();
+      
+      // Check blockchain FIRST before localStorage
+      // This is the source of truth - never trust localStorage for blockchain state
+      const alreadyRegisteredOnChain = await stellarBlockchain.isRegistered(numericEventId, walletAddress);
+      
+      if (alreadyRegisteredOnChain) {
+        throw new Error('ALREADY_REGISTERED');
+      }
+      
+      // Now proceed with registration
+      const { txHash } = await stellarBlockchain.registerForEvent(numericEventId);
+      
+      console.log('✅ Transaction confirmed on Stellar Testnet:', txHash);
+      
+      // Only NOW update localStorage after confirmed blockchain success
+      const registrations: Registration[] = JSON.parse(localStorage.getItem(REGISTRATIONS_KEY) || '[]');
       
       const newRegistration: Registration = {
         id: `reg-${Date.now()}`,
@@ -275,45 +312,60 @@ export const eventsService = {
         eventTitle: event.title,
       });
       
-      return newRegistration;
+      return { registration: newRegistration, txHash };
     } catch (error: any) {
       console.error('Blockchain registration failed:', error);
       throw error;
     }
   },
 
-  cancelRegistration: async (registrationId: string, userId: string): Promise<void> => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+  cancelRegistration: async (registrationId: string, userId: string): Promise<{ txHash: string }> => {
     const registrations: Registration[] = JSON.parse(localStorage.getItem(REGISTRATIONS_KEY) || '[]');
     const registration = registrations.find(r => r.id === registrationId && r.userId === userId);
     
     if (!registration) {
       throw new Error('Registration not found');
     }
-    
-    const regIndex = registrations.findIndex(r => r.id === registrationId);
-    registrations[regIndex].status = 'cancelled';
-    localStorage.setItem(REGISTRATIONS_KEY, JSON.stringify(registrations));
-    
-    // Update event participant count
-    const events: Event[] = JSON.parse(localStorage.getItem(EVENTS_KEY) || '[]');
-    const event = events.find(e => e.id === registration.eventId);
-    if (event) {
-      event.currentParticipants = Math.max(0, event.currentParticipants - 1);
-      const eventIndex = events.findIndex(e => e.id === registration.eventId);
-      events[eventIndex] = event;
-      localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+
+    // Blockchain is REQUIRED for cancellation
+    try {
+      // Extract numeric event ID from string ID
+      const numericEventId = parseInt(registration.eventId.replace('event-', ''));
+      
+      // Call blockchain cancel_registration
+      const { txHash } = await stellarBlockchain.cancelRegistration(numericEventId);
+      
+      console.log('✅ Cancellation confirmed on Stellar Testnet:', txHash);
+      
+      // Only update localStorage AFTER blockchain confirms success
+      const regIndex = registrations.findIndex(r => r.id === registrationId);
+      registrations[regIndex].status = 'cancelled';
+      localStorage.setItem(REGISTRATIONS_KEY, JSON.stringify(registrations));
+      
+      // Update event participant count in localStorage
+      const events: Event[] = JSON.parse(localStorage.getItem(EVENTS_KEY) || '[]');
+      const event = events.find(e => e.id === registration.eventId);
+      if (event) {
+        event.currentParticipants = Math.max(0, event.currentParticipants - 1);
+        const eventIndex = events.findIndex(e => e.id === registration.eventId);
+        events[eventIndex] = event;
+        localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+      }
+      
+      addActivity({
+        type: 'registration-cancelled',
+        message: `${registration.userName} cancelled registration for "${registration.eventTitle}" on blockchain (TX: ${txHash.substring(0, 8)}...)`,
+        userId: registration.userId,
+        userName: registration.userName,
+        eventId: registration.eventId,
+        eventTitle: registration.eventTitle,
+      });
+
+      return { txHash };
+    } catch (error: any) {
+      console.error('Blockchain cancellation failed:', error);
+      throw error;
     }
-    
-    addActivity({
-      type: 'registration-cancelled',
-      message: `${registration.userName} cancelled registration for "${registration.eventTitle}"`,
-      userId: registration.userId,
-      userName: registration.userName,
-      eventId: registration.eventId,
-      eventTitle: registration.eventTitle,
-    });
   },
 
   getUserRegistrations: async (userId: string): Promise<Registration[]> => {

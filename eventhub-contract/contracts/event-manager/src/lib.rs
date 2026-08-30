@@ -219,6 +219,79 @@ impl EventManager {
             .get(&event_regs_key)
             .unwrap_or(Vec::new(&env))
     }
+
+    /// Cancel registration for an event
+    pub fn cancel_registration(env: Env, event_id: u64, participant: Address) -> bool {
+        // Require participant authorization
+        participant.require_auth();
+
+        // Check if registration exists
+        let reg_key = DataKey::Registration(event_id, participant.clone());
+        if !env.storage().instance().has(&reg_key) {
+            panic!("Not registered");
+        }
+
+        // Get event to update participant count
+        let event_key = DataKey::Event(event_id);
+        let mut event: Event = env
+            .storage()
+            .instance()
+            .get(&event_key)
+            .expect("Event not found");
+
+        // Remove registration
+        env.storage().instance().remove(&reg_key);
+
+        // Update event participant count
+        if event.current_participants > 0 {
+            event.current_participants -= 1;
+        }
+        env.storage().instance().set(&event_key, &event);
+
+        // Remove from event registrations list
+        let event_regs_key = DataKey::EventRegistrations(event_id);
+        let mut event_regs: Vec<Address> = env
+            .storage()
+            .instance()
+            .get(&event_regs_key)
+            .unwrap_or(Vec::new(&env));
+        
+        // Find and remove participant
+        let mut new_regs = Vec::new(&env);
+        for i in 0..event_regs.len() {
+            let addr = event_regs.get(i).unwrap();
+            if addr != participant {
+                new_regs.push_back(addr);
+            }
+        }
+        env.storage().instance().set(&event_regs_key, &new_regs);
+
+        // Remove from user registrations list
+        let user_regs_key = DataKey::UserRegistrations(participant.clone());
+        let mut user_regs: Vec<u64> = env
+            .storage()
+            .instance()
+            .get(&user_regs_key)
+            .unwrap_or(Vec::new(&env));
+        
+        // Find and remove event_id
+        let mut new_user_regs = Vec::new(&env);
+        for i in 0..user_regs.len() {
+            let id = user_regs.get(i).unwrap();
+            if id != event_id {
+                new_user_regs.push_back(id);
+            }
+        }
+        env.storage().instance().set(&user_regs_key, &new_user_regs);
+
+        // Emit event
+        env.events().publish(
+            (String::from_str(&env, "registration_cancelled"), event_id),
+            participant,
+        );
+
+        true
+    }
 }
 
 mod test;

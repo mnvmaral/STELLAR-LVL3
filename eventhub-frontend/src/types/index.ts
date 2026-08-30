@@ -2,7 +2,7 @@ export type UserRole = 'user' | 'admin';
 
 export type EventCategory = 'Cultural' | 'Sports' | 'Tech' | 'Business' | 'Education' | 'Other';
 
-export type EventStatus = 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+export type EventStatus = 'upcoming' | 'ongoing' | 'completed' | 'cancelled' | 'demo';
 
 export type RegistrationStatus = 'registered' | 'attended' | 'cancelled';
 
