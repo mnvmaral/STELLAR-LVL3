@@ -198,6 +198,8 @@ The EventManager contract is the single source of truth for events and registrat
 ---
 
 ## 🚀 Contract Deployment
+  ## CONTRACT DEPLOYMENT SS : 
+  <img width="1447" height="840" alt="Screenshot 2026-08-20 at 10 37 15 PM" src="https://github.com/user-attachments/assets/df98f25f-1fb5-4572-a10d-94a6f3995b44" />
 
 ### Deployed Contract (Stellar Testnet)
 
