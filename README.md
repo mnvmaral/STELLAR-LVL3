@@ -678,6 +678,11 @@ Check out the [live demo](https://stellar-lvl-3-ekot.vercel.app) to see EventHub
 
 <img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 41 23 AM" src="https://github.com/user-attachments/assets/94e0d016-3017-472c-b022-4226bab8e709" />
 
+
+<img width="1447" height="840" alt="Screenshot 2026-08-26 at 8 16 47 PM" src="https://github.com/user-attachments/assets/89d8c76a-ac31-468c-9de1-87f636ff6e1b" />
+
+
+
 <img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 42 15 AM" src="https://github.com/user-attachments/assets/1a15d61d-d196-4c14-aff3-bcf97e24fcde" />
 
 <img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 41 33 AM" src="https://github.com/user-attachments/assets/73632568-f96a-4551-b923-9cee383ce3be" />
