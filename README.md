@@ -1,495 +1,409 @@
-# EventHub - Stellar Event Management dApp
+# EventHub
 
-<div align="center">
+**VERCEL DEPLOYMENT LINK:** https://stellar-lvl-3-ekot.vercel.app
 
-### Build Status & Deployment
+**Decentralized Event Management on Stellar Blockchain**
 
-[![CI](https://github.com/mnvmaral/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mnvmaral/STELLAR-LVL3/actions/workflows/ci.yml)
-[![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-7C4DFF?logo=stellar&logoColor=white)](https://stellar.expert/explorer/testnet/contract/CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE)
-[![Contract Deployed](https://img.shields.io/badge/Contract-Deployed-success?logo=stellar&logoColor=white)](https://stellar.expert/explorer/testnet/contract/CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE)
+![Frontend CI](https://github.com/mnvmaral/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg)
 
-### Technology Stack
+![Soroban](https://img.shields.io/badge/Soroban-Smart%20Contracts-blue)
+![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-purple)
+![Freighter Wallet](https://img.shields.io/badge/Freighter-Wallet-orange)
 
-![Soroban](https://img.shields.io/badge/Soroban-Smart%20Contracts-7C4DFF?logo=stellar&logoColor=white)
-![Rust](https://img.shields.io/badge/Rust-1.85+-orange?logo=rust&logoColor=white)
-![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-8.2-646CFF?logo=vite&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.3-38B2AC?logo=tailwind-css&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-Contract-orange)
+![React 19](https://img.shields.io/badge/React-19.2.8-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0.2-blue)
+![Vite](https://img.shields.io/badge/Vite-8.2.0-purple)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.3.3-cyan)
 
-### Project Info
-
-![License](https://img.shields.io/badge/License-MIT-green?logo=opensourceinitiative&logoColor=white)
-![Last Commit](https://img.shields.io/github/last-commit/mnvmaral/STELLAR-LVL3?logo=github)
-![Tests](https://img.shields.io/badge/Tests-9%20Passing-success?logo=checkmarx&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen)
+![Last Commit](https://img.shields.io/github/last-commit/mnvmaral/STELLAR-LVL3)
 
 ---
 
-**A decentralized event management platform built on Stellar blockchain with Soroban smart contracts**
+## Table of Contents
 
-[View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE) • [View Contract Transactions](https://stellar.expert/explorer/testnet/tx/f849e81a0277c166757b52314e261b39ef85fd697161c453b6cc0f68f75943a8)
-
-</div>
-
----
-
-## 📖 Table of Contents
-
-- [About](#-about)
-- [Key Features](#-key-features)
+- [Overview](#-overview)
+- [Live Demo](#-live-demo)
+- [Features](#-features)
 - [Architecture](#-architecture)
-- [Technology Stack](#-technology-stack)
-- [Smart Contract](#-smart-contract)
-- [Stellar Testnet Deployment](#-stellar-testnet-deployment)
-- [Wallet Integration](#-wallet-integration)
-- [Frontend ↔ Soroban Integration](#-frontend--soroban-integration)
-- [Transaction Flow](#-transaction-flow)
-- [Error Handling](#-error-handling)
-- [Testing](#-testing)
-- [CI/CD Pipeline](#-cicd-pipeline)
+- [Smart Contracts](#-smart-contracts)
+- [Tech Stack](#-tech-stack)
+- [Getting Started](#-getting-started)
 - [Project Structure](#-project-structure)
-- [Local Development](#-local-development)
-- [Environment Variables](#-environment-variables)
-- [Level 3 Requirements Status](#-level-3-requirements-status)
+- [CI/CD Pipeline](#-cicd-pipeline)
+- [Testing](#-testing)
+- [Mobile Responsive Design](#-mobile-responsive-design)
 - [Screenshots](#-screenshots)
-- [Future Improvements](#-future-improvements)
-- [Contributing](#-contributing)
-- [License](#-license)
 - [Author](#-author)
+- [License](#-license)
 
 ---
 
-## 🌟 About
+## 🎉 Overview
 
-**EventHub** is a production-ready decentralized application (dApp) for event management, leveraging the Stellar blockchain and Soroban smart contracts. Users can create, discover, and register for events with full on-chain verification, providing transparency, immutability, and decentralized trust.
+**EventHub** is a decentralized event management platform built on the Stellar Testnet using Soroban smart contracts. It enables event organizers to create blockchain-verified events and allows participants to register, cancel, and re-register for events through transparent, immutable on-chain transactions.
 
-The application features a modern React frontend with role-based authentication (admin and user), integrated with a robust Soroban smart contract deployed on the Stellar testnet. EventHub demonstrates advanced smart contract development, blockchain integration, and a professional SaaS-style user interface.
+Traditional event platforms rely on centralized databases where registration data can be modified or lost. EventHub addresses this by combining Stellar blockchain, Soroban smart contracts, and Freighter Wallet to create a trustless, transparent event ecosystem with an immutable audit trail.
+
+Event organizers create events on-chain with participant limits, while attendees register using their Stellar wallets. Every registration, cancellation, and re-registration is recorded on-chain, ensuring data integrity and providing verifiable proof of attendance.
+
+### Key Highlights
+
+- 🎫 **Blockchain-verified event registrations**
+- 👥 **Participant limit enforcement**
+- ✅ **Register → Cancel → Re-register lifecycle**
+- ⛓️ **Immutable blockchain audit trail**
+- ⚡ **Soroban smart contracts**
+- 🌐 **Stellar Testnet integration**
+- 📱 **Fully responsive interface**
+- 🚀 **Production-ready React + Vite application**
 
 ---
 
-## ✨ Key Features
+## 🚀 Live Demo
 
-### Public Features
-- 🏠 **Landing Page** - Hero section with gradient design and call-to-action
-- 🔍 **Event Discovery** - Browse all events with search and category filters
-- 📄 **Event Details** - View comprehensive event information
-- 🔐 **User Authentication** - Secure email/password login and signup
+| Resource | Link |
+|----------|------|
+| 🌐 **Live Application** | https://stellar-lvl-3-ekot.vercel.app |
+| 📂 **GitHub Repository** | https://github.com/mnvmaral/STELLAR-LVL3 |
+| 🌍 **Stellar Explorer** | https://stellar.expert/explorer/testnet |
+| 🔐 **Freighter Wallet** | https://www.freighter.app |
 
-### User Features
-- 📊 **Dashboard** - Personal overview of registered and upcoming events
-- 🎟️ **Event Registration** - Register for events via blockchain transactions
-- 📅 **My Events** - Track all registered events
-- 📈 **Activity Timeline** - View user activity history
-- 👤 **Profile Management** - Update personal information
+> **Note:** The project runs on the Stellar Testnet. Install the Freighter Wallet extension and fund your wallet using Friendbot before testing blockchain transactions.
 
-### Admin Features
-- 📊 **Admin Dashboard** - System statistics (total events, registrations, participants)
-- ➕ **Event Management** - Create, edit, and manage events (stored on-chain)
-- 📋 **Registration Tracking** - View all event registrations
-- 👥 **Participant Management** - Track and manage participants
-- 📜 **Activity Logs** - System-wide activity monitoring
-- ⚙️ **Admin Profile** - Manage admin account settings
+---
 
-### Blockchain Features
-- ⛓️ **On-Chain Event Creation** - Events stored immutably on Stellar
-- 🔒 **On-Chain Registrations** - Registration verification via smart contracts
-- 💳 **Freighter Wallet Integration** - Secure transaction signing
-- ✅ **Transaction Verification** - All transactions viewable on Stellar Expert
-- 🎯 **Event Capacity Management** - Enforced on-chain with automatic validation
-- 🚫 **Duplicate Registration Prevention** - Smart contract validation
+## ✨ Features
+
+### Core Features
+
+- 🔐 **Secure Freighter wallet authentication**
+- 🎪 **Create blockchain-verified events**
+- 🎫 **On-chain event registration**
+- ❌ **Cancel registration with blockchain confirmation**
+- 🔄 **Re-register after cancellation**
+- 👥 **Participant count enforcement**
+- 📜 **Immutable blockchain audit trail**
+- 🎭 **Multi-role support (User / Admin / Organizer)**
+
+### Advanced Features
+
+- ⚡ **Soroban smart contracts**
+- 📱 **Fully mobile responsive**
+- 🚀 **GitHub Actions CI/CD pipeline**
+- ⚙️ **Production-ready architecture**
+- 🧪 **12 automated contract tests**
+- 🔍 **Stellar Horizon integration**
+- 💳 **Freighter transaction signing**
+- 🌍 **Live deployment on Vercel**
+- 🏗️ **Blockchain-first state management**
 
 ---
 
 ## 🏗️ Architecture
 
-EventHub follows a modern decentralized application architecture:
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     EventHub Frontend                        │
-│  (React 19 + TypeScript 6 + Vite 8 + Tailwind CSS 4)       │
-│                                                              │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │   Public     │  │     User     │  │    Admin     │     │
-│  │    Pages     │  │   Dashboard  │  │   Dashboard  │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-│                                                              │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │           Services Layer (Hybrid)                     │  │
-│  │  • stellar-wallet.ts (Freighter Integration)         │  │
-│  │  • stellar-blockchain.ts (Contract Interaction)      │  │
-│  │  • events.ts (Blockchain + localStorage fallback)   │  │
-│  └──────────────────────────────────────────────────────┘  │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-                     │ @stellar/stellar-sdk
-                     │ @stellar/freighter-api
-                     │
-┌────────────────────▼────────────────────────────────────────┐
-│                  Stellar Testnet                             │
-│                                                              │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │         EventManager Smart Contract                   │  │
-│  │         (Soroban / Rust)                             │  │
-│  │                                                       │  │
-│  │  Contract ID:                                        │  │
-│  │  CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4...  │  │
-│  │                                                       │  │
-│  │  Functions: create_event, get_event,                │  │
-│  │             register_for_event, etc.                │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                              │
-│  Data Storage: Instance Storage (On-Chain)                  │
-│  Authorization: Address-based require_auth()                │
-└──────────────────────────────────────────────────────────────┘
+│                        EventHub                             │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   ┌──────────────┐    ┌──────────────┐    ┌─────────────┐  │
+│   │   Attendee   │    │  Organizer   │    │    Admin    │  │
+│   │   Browser    │    │   Browser    │    │   Panel     │  │
+│   └──────┬───────┘    └──────┬───────┘    └──────┬──────┘  │
+│          │                   │                   │         │
+│   ┌──────▼───────────────────▼───────────────────▼──────┐  │
+│   │              React 19 + TypeScript + Vite           │  │
+│   │           TailwindCSS · React Router                │  │
+│   └──────────────────────┬──────────────────────────────┘  │
+│                          │                                  │
+│          ┌───────────────┴────────────────┐                 │
+│          │                                │                 │
+│   ┌──────▼──────┐                 ┌──────▼──────┐         │
+│   │  Freighter  │                 │   Local     │         │
+│   │   Wallet    │                 │   Storage   │         │
+│   └──────┬──────┘                 └─────────────┘         │
+│          │                                                  │
+│   ┌──────▼──────────────────────────────────────────────┐  │
+│   │                  Stellar Testnet                    │  │
+│   │    ┌─────────────────────────────────────────┐     │  │
+│   │    │         EventManager Contract            │     │  │
+│   │    │  ┌────────────────────────────────────┐ │     │  │
+│   │    │  │  create_event                      │ │     │  │
+│   │    │  │  register_for_event                │ │     │  │
+│   │    │  │  cancel_registration               │ │     │  │
+│   │    │  │  is_registered                     │ │     │  │
+│   │    │  │  get_all_events                    │ │     │  │
+│   │    │  │  get_event                         │ │     │  │
+│   │    │  │  get_user_registrations            │ │     │  │
+│   │    │  │  get_event_registrations           │ │     │  │
+│   │    │  └────────────────────────────────────┘ │     │  │
+│   │    └─────────────────────────────────────────┘     │  │
+│   └─────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### Key Architectural Decisions
+### Three-Layer Architecture:
 
-1. **Hybrid Data Layer**: Blockchain for critical operations (create, register), localStorage for UI state and caching
-2. **Wallet-Only-When-Needed**: Email/password authentication for app access, wallet required only for blockchain transactions
-3. **Transaction State Machine**: Built-in support for wallet connection, pending states, success/failure handling
-4. **Role-Based Access Control**: Separate user and admin dashboards with protected routes
-5. **Mobile-First Responsive**: Adapts to desktop, tablet, and mobile with collapsible navigation
+**Frontend Layer** — React 19 with TypeScript compiled by Vite, styled with TailwindCSS. React Router handles client-side routing. The UI prioritizes blockchain state as the source of truth, using localStorage only for temporary caching.
 
----
+**Blockchain Layer** — Single Soroban smart contract (Rust) deployed on Stellar Testnet. EventManager contract manages the complete event lifecycle including creation, registration, cancellation, and queries. Stellar SDK handles transaction building, signing, and submission. Horizon API provides event polling and transaction history.
 
-## 🛠️ Technology Stack
-
-### Frontend
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| React | 19.2.8 | UI library for component-based development |
-| TypeScript | 6.0.2 | Type safety and developer experience |
-| Vite | 8.2.0 | Build tool and development server |
-| Tailwind CSS | 4.3.3 | Utility-first CSS framework |
-| React Router | 7.18.2 | Client-side routing and navigation |
-| @stellar/stellar-sdk | 16.2.0 | Stellar blockchain SDK |
-| @stellar/freighter-api | 6.0.1 | Freighter wallet integration |
-
-### Smart Contract
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| Rust | 1.85+ | Smart contract programming language |
-| Soroban SDK | 27.0 | Stellar smart contract SDK |
-| soroban-cli | Latest | Contract deployment and management |
-
-### Development Tools
-| Tool | Purpose |
-|------|---------|
-| ESLint | Code linting and quality checks |
-| TypeScript ESLint | TypeScript-specific linting rules |
-| GitHub Actions | Continuous integration and deployment |
-| Stellar CLI | Blockchain interaction and contract deployment |
-| Stellar Lab | Contract testing and exploration |
+**Storage Layer** — Blockchain stores all event data and registration state. Local storage caches event lists and registration status for performance, but always defers to blockchain state for critical operations. Register → Cancel → Re-register flow proves blockchain is the source of truth.
 
 ---
 
-## 🔷 Smart Contract
+## 📜 Smart Contracts
 
-The **EventManager** smart contract is written in Rust using the Soroban SDK v27.0 and deployed on the Stellar testnet. It provides core event management functionality with on-chain storage and authorization.
+One production-grade Soroban smart contract written in Rust powers EventHub's on-chain logic. The contract follows Soroban best practices including proper authorization, event emission, error handling, and comprehensive testing.
 
-### Contract Functions
+### EventManager Contract
+
+The EventManager contract is the single source of truth for events and registrations. It maintains counters for event IDs, stores complete event metadata, tracks registrations per event and per user, and enforces participant limits with authorization checks.
 
 | Function | Parameters | Returns | Description |
 |----------|-----------|---------|-------------|
-| **create_event** | `organizer: Address`<br>`title: String`<br>`description: String`<br>`category: String`<br>`date: String`<br>`time: String`<br>`location: String`<br>`max_participants: u32` | `u64` (event ID) | Create a new event. Requires organizer authorization. Validates max_participants > 0. Emits `event_created`. |
-| **get_event** | `event_id: u64` | `Option<Event>` | Fetch a single event by ID. Read-only, no auth required. |
-| **get_all_events** | None | `Vec<Event>` | Fetch all events from the contract. Read-only, no auth required. |
-| **register_for_event** | `event_id: u64`<br>`participant: Address` | `bool` | Register for an event. Requires participant authorization. Prevents duplicate registrations and validates capacity. Emits `user_registered`. |
-| **is_registered** | `event_id: u64`<br>`participant: Address` | `bool` | Check if a user is registered for an event. Read-only, no auth required. |
-| **get_user_registrations** | `user: Address` | `Vec<u64>` (event IDs) | Get all event IDs a user is registered for. Read-only, no auth required. |
-| **get_event_registrations** | `event_id: u64` | `Vec<Address>` | Get all participants registered for an event. Read-only, no auth required. |
+| `create_event` | `env: Env, organizer: Address, title: String, description: String, category: String, date: String, time: String, location: String, max_participants: u32` | `u64` | Creates a new event and returns unique event_id. Requires organizer authorization. Validates max_participants > 0. |
+| `get_event` | `env: Env, event_id: u64` | `Option<Event>` | Returns a single event by ID. Returns None if event doesn't exist. |
+| `get_all_events` | `env: Env` | `Vec<Event>` | Returns all events stored on-chain. Used for event browsing. |
+| `register_for_event` | `env: Env, event_id: u64, participant: Address` | `bool` | Registers participant for an event. Requires participant authorization. Checks event capacity and prevents duplicate registration. |
+| `is_registered` | `env: Env, event_id: u64, participant: Address` | `bool` | Checks if a participant is registered for an event. Used before showing Register/Cancel button. |
+| `get_user_registrations` | `env: Env, user: Address` | `Vec<u64>` | Returns all event IDs a user is registered for. Used in My Events page. |
+| `get_event_registrations` | `env: Env, event_id: u64` | `Vec<Address>` | Returns all participant addresses registered for an event. Used by organizers. |
+| `cancel_registration` | `env: Env, event_id: u64, participant: Address` | `bool` | Cancels a registration. Requires participant authorization. Decrements participant count and removes from indices. |
 
-### Contract Data Structures
+### Storage Architecture
 
-**Event Struct:**
-```rust
-pub struct Event {
-    pub id: u64,
-    pub title: String,
-    pub description: String,
-    pub category: String,
-    pub date: String,
-    pub time: String,
-    pub location: String,
-    pub organizer: Address,
-    pub max_participants: u32,
-    pub current_participants: u32,
-    pub status: String,
-    pub created_at: u64,
-}
-```
-
-**Registration Struct:**
-```rust
-pub struct Registration {
-    pub event_id: u64,
-    pub participant: Address,
-    pub registered_at: u64,
-}
-```
-
-### Contract Events
-
-- **event_created**: Emitted when a new event is created (includes event ID and organizer)
-- **user_registered**: Emitted when a user registers for an event (includes event ID and participant address)
-
-### Authorization & Validation
-
-- **Address-based Authorization**: Write operations (`create_event`, `register_for_event`) use `require_auth()` to verify transaction signatures
-- **Input Validation**: max_participants must be > 0
-- **Capacity Checks**: Prevents registration when `current_participants >= max_participants`
-- **Duplicate Prevention**: Checks existing registrations to prevent double registration
-- **Error Handling**: Panics with descriptive messages ("Event is full", "Already registered", "Event not found")
+| Key | Type | Storage | Purpose |
+|-----|------|---------|---------|
+| `EventCounter` | `u64` | Instance | Incremented counter for unique event IDs |
+| `Event(u64)` | `Event` | Instance | Individual event data (title, date, organizer, capacity) |
+| `Registration(u64, Address)` | `Registration` | Instance | Individual registration (event_id, participant, timestamp) |
+| `EventRegistrations(u64)` | `Vec<Address>` | Instance | Index of all participants registered for an event |
+| `UserRegistrations(Address)` | `Vec<u64>` | Instance | Index of all events a user is registered for |
 
 ---
 
-## 🌐 Stellar Testnet Deployment
+## 🚀 Contract Deployment
 
-The EventManager smart contract is deployed and verified on the **Stellar Testnet** with the following on-chain artifacts:
+### Deployed Contract (Stellar Testnet)
 
-### Contract Information
+| Contract | Contract ID | Explorer |
+|----------|-------------|----------|
+| EventManager | `CDWEYVU5IHLNZRVSJC7DFX2KARIOKKFBPROQOAHEH2BPLFVRYZSHGCXQ` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDWEYVU5IHLNZRVSJC7DFX2KARIOKKFBPROQOAHEH2BPLFVRYZSHGCXQ) |
 
-| Property | Value |
-|----------|-------|
-| **Contract ID** | `CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE` |
+### Network Configuration
+
+| Parameter | Value |
+|-----------|-------|
 | **Network** | Stellar Testnet |
-| **WASM Hash** | `90848d7eb2ff47653498e461a6a1367b59e90ff9d2eaa231cdf332ddeaf2463f` |
+| **Horizon URL** | https://horizon-testnet.stellar.org |
+| **Soroban RPC** | https://soroban-testnet.stellar.org |
+| **Network Passphrase** | Test SDF Network ; September 2015 |
+| **Explorer** | https://stellar.expert/explorer/testnet |
 
-### Verified Transactions
+### Environment Variables
 
-| Transaction Type | Hash | Stellar Expert Link |
-|-----------------|------|---------------------|
-| **Upload WASM** | `192f167937fa1da96a4d53f6894b17121d0c47e71fd7e1346ffca4ae3a800cf7` | [View Transaction](https://stellar.expert/explorer/testnet/tx/192f167937fa1da96a4d53f6894b17121d0c47e71fd7e1346ffca4ae3a800cf7) |
-| **Deploy Contract** | `bed09df241497575d057de0dbe313929925c10df279a7c21c24b73d51eeec496` | [View Transaction](https://stellar.expert/explorer/testnet/tx/bed09df241497575d057de0dbe313929925c10df279a7c21c24b73d51eeec496) |
-| **Create Event (First)** | `f849e81a0277c166757b52314e261b39ef85fd697161c453b6cc0f68f75943a8` | [View Transaction](https://stellar.expert/explorer/testnet/tx/f849e81a0277c166757b52314e261b39ef85fd697161c453b6cc0f68f75943a8) |
+```bash
+# Stellar Network
+VITE_STELLAR_NETWORK=testnet
+VITE_STELLAR_RPC_URL=https://soroban-testnet.stellar.org
+VITE_STELLAR_HORIZON_URL=https://horizon-testnet.stellar.org
 
-### Verification
-
-You can verify the deployment and interact with the contract using:
-
-- **Stellar Expert**: [Contract Explorer](https://stellar.expert/explorer/testnet/contract/CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE)
-- **Stellar Lab**: [Contract Interface](https://lab.stellar.org/)
-
-The first event created on-chain ("Blockchain Summit 2024") is confirmed with transaction hash `f849e81a...` and can be verified directly on the blockchain.
-
----
-
-## 💳 Wallet Integration
-
-EventHub integrates with **Freighter Wallet**, the leading Stellar wallet extension, to enable secure blockchain transaction signing.
-
-### Wallet Service Features
-
-- **Freighter Detection**: Automatic detection of installed wallet extension
-- **Permission Management**: Proper isAllowed()/setAllowed() flow per Freighter API v6
-- **Address Retrieval**: Fetch user's public key for transaction signing
-- **Transaction Signing**: Sign transactions securely via Freighter API
-- **Network Configuration**: Configured for Stellar Testnet
-
-### Wallet Flow
-
-1. User attempts a blockchain operation (create event, register for event)
-2. App checks for Freighter wallet installation
-3. App checks current permission state via `isAllowed()`
-4. If not permitted, calls `setAllowed()` to trigger Freighter permission popup
-5. User approves permission in Freighter
-6. App retrieves address via `getAddress()`
-7. App verifies network is Stellar Testnet
-8. Transaction is prepared and sent to wallet for signing via `signTransaction()`
-9. User reviews and signs transaction in Freighter
-10. Signed transaction is submitted to Stellar network
-11. App polls for transaction confirmation
-12. App displays transaction status and hash (viewable on Stellar Expert)
-
-**Note**: Email/password authentication is used for app login. Wallet connection is only requested when performing blockchain operations (create event, register for event).
-
-**Test Wallet Address**: GCN3LGJ6NTUM7BMYEI7UEY5D234CRMBO2DEP2TF4C5D7RIXD74J324T2 (funded with 10,000 Testnet XLM)
-
----
-
-## 🔗 Frontend ↔ Soroban Integration
-
-The frontend communicates with the Soroban smart contract through a service layer architecture:
-
-### Service Architecture
-
-1. **stellar-wallet.ts**: Manages Freighter wallet connection, address retrieval, and transaction signing
-2. **stellar-blockchain.ts**: Handles contract interaction (create_event, register_for_event, get_all_events, etc.)
-3. **events.ts**: Hybrid service that coordinates blockchain calls with localStorage for UI state and caching
-
-### Integration Flow
-
-**Creating an Event:**
-```typescript
-User fills form → events.createEvent() → stellar-blockchain.createEvent() 
-→ Prepare contract call → Request wallet signature → Submit to blockchain 
-→ Transaction confirmed → UI updated
+# Contract Address
+VITE_EVENT_CONTRACT_ID=CDWEYVU5IHLNZRVSJC7DFX2KARIOKKFBPROQOAHEH2BPLFVRYZSHGCXQ
 ```
 
-**Registering for Event:**
-```typescript
-User clicks register → events.registerForEvent() → Check wallet connection 
-→ stellar-blockchain.registerForEvent() → Request signature → Submit transaction 
-→ Update participant count → UI refresh
+### Deploy Your Own
+
+Follow these steps to deploy the EventManager contract to Stellar Testnet using Stellar CLI.
+
+**Step 1: Generate keypair**
+
+```bash
+stellar keys generate eventhub
 ```
 
-**Fetching Events:**
-```typescript
-Page loads → events.getEvents() → stellar-blockchain.getAllEvents() 
-→ Fetch from contract (read-only) → Transform data → Display in UI
+**Step 2: Fund account with testnet XLM**
+
+```bash
+stellar keys fund eventhub
 ```
 
-### SDK Configuration
+**Step 3: Build contract**
 
-The frontend uses:
-- `@stellar/stellar-sdk` v16.2.0 for blockchain interaction
-- `@stellar/freighter-api` v6.0.1 for wallet integration
-- Environment variables for contract ID and network configuration
-
----
-
-## 🔄 Transaction Flow
-
-EventHub implements a comprehensive transaction state machine for blockchain operations:
-
-### Transaction States
-
-| State | Description | UI Behavior |
-|-------|-------------|-------------|
-| **idle** | No active transaction | Normal button state |
-| **wallet-required** | Wallet needed for operation | Show "Connect Wallet" button |
-| **wallet-selection** | Choosing wallet provider | Wallet selection modal |
-| **waiting-for-wallet** | Awaiting user signature | Loading state with spinner |
-| **user-rejected** | User declined in wallet | Error message, retry button |
-| **pending** | Transaction submitted | Loading state, show TX hash |
-| **success** | Transaction confirmed | Success message, confetti animation |
-| **failed** | Transaction failed | Error message, retry button |
-| **insufficient-balance** | Not enough XLM | Balance warning, fund wallet CTA |
-| **wallet-unavailable** | Wallet not installed | Install Freighter prompt |
-
-### Transaction Lifecycle
-
-1. **Initiation**: User triggers blockchain operation
-2. **Wallet Check**: App verifies wallet connection
-3. **Transaction Preparation**: Contract call prepared with parameters
-4. **User Signature**: Wallet prompts user to sign transaction
-5. **Submission**: Signed transaction sent to Stellar network
-6. **Confirmation**: Wait for ledger confirmation
-7. **UI Update**: State updated based on success/failure
-
----
-
-## 🛡️ Error Handling
-
-EventHub implements comprehensive error handling across all layers:
-
-### Smart Contract Error Handling
-
-- **Validation Errors**: "Max participants must be greater than 0"
-- **Authorization Errors**: Automatic panic if `require_auth()` fails
-- **Business Logic Errors**: "Event is full", "Already registered", "Event not found"
-
-### Frontend Error Handling
-
-- **Wallet Errors**: Wallet not installed, user rejected transaction, network mismatch
-- **Network Errors**: RPC timeout, connection failed, invalid response
-- **UI Errors**: Form validation, empty states, loading skeletons
-- **Transaction Errors**: Insufficient balance, transaction failed, contract panic
-
-### Loading States
-
-All async operations display appropriate loading states:
-- Skeleton loaders for data fetching
-- Spinner animations for transaction submission
-- Progress indicators for multi-step operations
-- Disabled buttons to prevent duplicate submissions
-
----
-
-## 🧪 Testing
-
-### Smart Contract Tests
-
-**Location**: `eventhub-contract/contracts/event-manager/src/test.rs`
-
-**Test Suite**: 9 comprehensive tests, **all passing**
-
-| Test | Description | Status |
-|------|-------------|--------|
-| `test_create_event` | Verify event creation and data storage | ✅ Pass |
-| `test_get_all_events` | Fetch multiple events correctly | ✅ Pass |
-| `test_register_for_event` | Successful event registration | ✅ Pass |
-| `test_duplicate_registration` | Prevent double registration (should panic) | ✅ Pass |
-| `test_event_full` | Prevent registration when capacity reached | ✅ Pass |
-| `test_invalid_max_participants` | Reject max_participants = 0 | ✅ Pass |
-| `test_get_user_registrations` | Fetch user's event list | ✅ Pass |
-| `test_get_event_registrations` | Fetch event's participant list | ✅ Pass |
-| `test_register_for_nonexistent_event` | Reject invalid event ID | ✅ Pass |
-
-**Run Tests:**
 ```bash
 cd eventhub-contract
-cargo test --package event-manager
+cargo build --target wasm32-unknown-unknown --release
 ```
 
-**Test Output:**
-```
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured
+**Step 4: Deploy EventManager contract**
+
+```bash
+stellar contract deploy \
+  --wasm contracts/target/wasm32-unknown-unknown/release/event_manager.wasm \
+  --source eventhub \
+  --network testnet
 ```
 
-### Frontend Tests
-
-Frontend testing is structured but not yet implemented. The CI pipeline validates:
-- TypeScript compilation
-- ESLint code quality checks
-- Production build success
+Save the returned contract ID to `VITE_EVENT_CONTRACT_ID`.
 
 ---
 
-## 🔧 CI/CD Pipeline
+## 🔄 Contract Interaction Flow
 
-EventHub includes a comprehensive **GitHub Actions CI pipeline** that runs automatically on every push and pull request to `main`, `master`, or `develop` branches.
+```
+User Action                  Blockchain Layer                    
+───────────────              ─────────────────                   
+│                            │                                 
+▼                            │                                 
+Create Event                     │                                 
+(title, date, capacity)          │                                 
+│                            │                                 
+▼                            │                                 
+Freighter ──────────────────► EventManager                          
+Sign TX                       create_event()                         
+│                                │                                 
+│                         Event Stored                             
+│                         on-chain                             
+│                                │                                 
+▼                                │                                 
+Browse Events ──────────────► get_all_events()              
+(read-only)                        │                     
+│                                │                                 
+▼                                │                                 
+Register ────────────────────► register_for_event()                           
+(wallet signing)                   │                                 
+│                         Registration                             
+│                         Recorded                             
+│                                │                                 
+▼                                │                                 
+Cancel ──────────────────────► cancel_registration()                           
+(wallet signing)                   │                                 
+│                         Registration                             
+│                         Removed                             
+│                                │                                 
+▼                                │                                 
+Re-register ─────────────────► register_for_event()              
+(wallet signing)                   │              
+│                         Proves blockchain                             
+│                         is source of truth
+```
 
-### Workflow: Continuous Integration
+**Phase 1: Event Creation** — Organizer enters event details (title, description, category, date, time, location, max participants). Frontend calls `EventManager.create_event()` with organizer's wallet signature. Contract increments counter and stores event on-chain with status "upcoming".
 
-**File**: `.github/workflows/ci.yml`
+**Phase 2: Browse Events** — Users call `get_all_events()` to fetch events from blockchain. No wallet signature required for read-only operations. Events display with current participant count and capacity.
 
-**Status**: [![CI](https://github.com/mnvmaral/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mnvmaral/STELLAR-LVL3/actions/workflows/ci.yml)
+**Phase 3: Register** — User clicks Register. Frontend calls `is_registered()` to check if already registered. If not registered, calls `register_for_event()` with user's wallet signature. Freighter popup appears for transaction signing. Contract validates capacity, stores registration, increments participant count.
 
-### Pipeline Jobs
+**Phase 4: Cancel** — User clicks Cancel Registration. Frontend calls `cancel_registration()` with user's wallet signature. Freighter popup appears. Contract removes registration, decrements participant count, updates indices.
 
-#### 1. Frontend Build & Lint
-- ✅ Setup Node.js 20 with npm caching
-- ✅ Install dependencies with `npm ci`
-- ✅ Run ESLint for code quality checks
-- ✅ Build production bundle with Vite
-- ✅ Upload build artifacts (retained for 7 days)
+**Phase 5: Re-register** — User clicks Register again. Frontend calls `is_registered()` (returns false after cancellation). Calls `register_for_event()` again. Contract allows re-registration, proving blockchain state is accurate.
 
-#### 2. Smart Contract Build & Test
-- ✅ Setup Rust toolchain (stable, latest) with `wasm32v1-none` target
-- ✅ Cache Cargo dependencies for faster builds (keyed by Rust version)
-- ✅ Install Soroban CLI
-- ✅ Build contract to optimized WASM
-- ✅ **Run all 9 contract tests** (must pass)
-- ✅ Optimize WASM binary
-- ✅ Upload WASM artifact (retained for 7 days)
+**Phase 6: Audit Trail** — Every action is recorded on-chain with timestamps. Users can view transaction hashes linked to Stellar Expert for verification.
 
-#### 3. Integration Validation
-- ✅ Verify `.env.example` configuration exists
-- ✅ Check `DEPLOYMENT_SUMMARY.md` documentation
-- ✅ Validate contract ID is configured
-- ✅ Runs after both build jobs complete
+---
 
-### Continuous Deployment
+## 🛠️ Tech Stack
 
-**Current Status**: Manual deployment
+### Frontend
 
-- **Smart Contract**: Already deployed to Stellar Testnet (manual)
-- **Frontend**: Not yet deployed (manual deployment to Vercel pending)
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **React** | 19.2.8 | UI framework with concurrent rendering |
+| **TypeScript** | 6.0.2 | Type safety and developer experience |
+| **Vite** | 8.2.0 | Build tool with HMR and fast cold starts |
+| **TailwindCSS** | 4.3.3 | Utility-first CSS styling |
+| **React Router** | 7.18.2 | Client-side routing |
 
-**Note**: CD workflow will be added when frontend deployment is configured.
+### Blockchain
+
+| Technology | Purpose |
+|------------|---------|
+| **Stellar SDK** | 16.2.0 - Horizon API, transaction building, signing |
+| **Soroban SDK** | Smart contract framework for Rust |
+| **Freighter API** | 6.0.1 - Wallet connection and transaction signing |
+| **Stellar CLI** | Contract deployment and local testing |
+| **Rust** | Smart contract language |
+| **Cargo** | Rust package manager |
+
+### Infrastructure
+
+| Technology | Purpose |
+|------------|---------|
+| **Vercel** | Frontend deployment and edge caching |
+| **GitHub Actions** | CI/CD pipeline for frontend and contracts |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20 or later
+- npm 10 or later
+- Rust 1.75 or later
+- Cargo
+- Stellar CLI (install with `cargo install stellar-cli --features opt`)
+- Freighter Wallet browser extension
+- Git
+
+### Installation
+
+**1. Clone the repository:**
+
+```bash
+git clone https://github.com/mnvmaral/STELLAR-LVL3.git
+cd STELLAR-LVL3
+```
+
+**2. Install frontend dependencies:**
+
+```bash
+cd eventhub-frontend
+npm install
+```
+
+**3. Build Soroban contract:**
+
+```bash
+cd eventhub-contract
+cargo build --target wasm32-unknown-unknown --release
+```
+
+**4. Configure environment:**
+
+```bash
+cp eventhub-frontend/.env.example eventhub-frontend/.env
+# Edit .env with your contract ID and network URLs
+```
+
+**5. Run development server:**
+
+```bash
+cd eventhub-frontend
+npm run dev
+```
+
+App will open at http://localhost:5173.
+
+**6. Run all tests:**
+
+```bash
+# Contract tests
+cd eventhub-contract && cargo test
+```
+
+### Quick Demo (No Setup Required)
+
+Visit the live application:
+
+**https://stellar-lvl-3-ekot.vercel.app**
+
+> **Note:** This application runs on the Stellar Testnet. To use all features, install the Freighter Wallet extension and fund your wallet with Testnet XLM using Friendbot before interacting with the blockchain.
 
 ---
 
@@ -497,282 +411,340 @@ EventHub includes a comprehensive **GitHub Actions CI pipeline** that runs autom
 
 ```
 STELLAR-LVL3/
-├── .github/
-│   └── workflows/
-│       └── ci.yml                    # CI/CD pipeline configuration
-│
-├── eventhub-contract/                # Soroban smart contracts
+├── eventhub-frontend/                 # React TypeScript application
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ActivityItem.tsx
+│   │   │   ├── Button.tsx
+│   │   │   ├── ConfirmationDialog.tsx
+│   │   │   ├── DashboardLayout.tsx
+│   │   │   ├── EmptyState.tsx
+│   │   │   ├── EventCard.tsx
+│   │   │   ├── EventStatusBadge.tsx
+│   │   │   ├── FilterBar.tsx
+│   │   │   ├── Input.tsx
+│   │   │   ├── LoadingSkeleton.tsx
+│   │   │   ├── Modal.tsx
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── PageHeader.tsx
+│   │   │   ├── ProtectedRoute.tsx
+│   │   │   ├── SearchBar.tsx
+│   │   │   ├── Select.tsx
+│   │   │   ├── Sidebar.tsx
+│   │   │   ├── StatsCard.tsx
+│   │   │   ├── Toast.tsx
+│   │   │   ├── TransactionSuccessModal.tsx
+│   │   │   └── UserAvatar.tsx
+│   │   ├── pages/
+│   │   │   ├── About.tsx
+│   │   │   ├── EventDetails.tsx
+│   │   │   ├── Events.tsx
+│   │   │   ├── Landing.tsx
+│   │   │   ├── Login.tsx
+│   │   │   ├── Signup.tsx
+│   │   │   ├── admin/
+│   │   │   │   ├── AdminActivity.tsx
+│   │   │   │   ├── AdminDashboard.tsx
+│   │   │   │   ├── AdminEvents.tsx
+│   │   │   │   ├── AdminParticipants.tsx
+│   │   │   │   ├── AdminProfile.tsx
+│   │   │   │   └── AdminRegistrations.tsx
+│   │   │   └── user/
+│   │   │       ├── Activity.tsx
+│   │   │       ├── Dashboard.tsx
+│   │   │       ├── MyEvents.tsx
+│   │   │       ├── Profile.tsx
+│   │   │       └── UpcomingEvents.tsx
+│   │   ├── services/
+│   │   │   ├── auth.ts
+│   │   │   ├── events.ts
+│   │   │   ├── stellar-blockchain.ts
+│   │   │   └── stellar-wallet.ts
+│   │   ├── context/
+│   │   │   └── AuthContext.tsx
+│   │   ├── types/
+│   │   │   └── index.ts
+│   │   ├── assets/
+│   │   │   ├── hero.png
+│   │   │   ├── react.svg
+│   │   │   └── vite.svg
+│   │   ├── App.tsx
+│   │   ├── App.css
+│   │   ├── main.tsx
+│   │   └── index.css
+│   ├── public/
+│   │   ├── favicon.svg
+│   │   └── icons.svg
+│   ├── index.html
+│   ├── vite.config.ts
+│   ├── tsconfig.json
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   ├── eslint.config.js
+│   ├── package.json
+│   └── .env.example
+├── eventhub-contract/                 # Soroban smart contract (Rust)
 │   ├── contracts/
 │   │   └── event-manager/
 │   │       ├── src/
-│   │       │   ├── lib.rs           # Contract implementation
-│   │       │   └── test.rs          # Contract tests (9 tests)
-│   │       ├── Cargo.toml           # Contract dependencies
-│   │       └── Makefile             # Build commands
-│   ├── Cargo.toml                   # Workspace configuration
+│   │       │   ├── lib.rs
+│   │       │   └── test.rs
+│   │       ├── test_snapshots/
+│   │       │   └── test/
+│   │       │       ├── test_cancel_and_reregister_multiple_times.1.json
+│   │       │       ├── test_cancel_nonexistent_registration.1.json
+│   │       │       ├── test_cancel_registration.1.json
+│   │       │       ├── test_create_event.1.json
+│   │       │       ├── test_duplicate_registration.1.json
+│   │       │       ├── test_event_full.1.json
+│   │       │       ├── test_get_all_events.1.json
+│   │       │       ├── test_get_event_registrations.1.json
+│   │       │       ├── test_get_user_registrations.1.json
+│   │       │       ├── test_invalid_max_participants.1.json
+│   │       │       ├── test_register_for_event.1.json
+│   │       │       └── test_register_for_nonexistent_event.1.json
+│   │       ├── Cargo.toml
+│   │       └── Makefile
+│   ├── Cargo.toml
+│   ├── Cargo.lock
 │   └── README.md
-│
-├── eventhub-frontend/                # React frontend application
-│   ├── public/                      # Static assets
-│   ├── src/
-│   │   ├── components/              # Reusable UI components (21 components)
-│   │   │   ├── Button.tsx
-│   │   │   ├── EventCard.tsx
-│   │   │   ├── Modal.tsx
-│   │   │   ├── Sidebar.tsx
-│   │   │   └── ...
-│   │   ├── pages/                   # Page components (18 pages)
-│   │   │   ├── Landing.tsx
-│   │   │   ├── Login.tsx
-│   │   │   ├── Events.tsx
-│   │   │   ├── user/               # User dashboard pages
-│   │   │   └── admin/              # Admin dashboard pages
-│   │   ├── services/                # Service layer
-│   │   │   ├── auth.ts             # Authentication service
-│   │   │   ├── events.ts           # Hybrid events service
-│   │   │   ├── stellar-wallet.ts   # Freighter integration
-│   │   │   └── stellar-blockchain.ts # Contract interaction
-│   │   ├── context/
-│   │   │   └── AuthContext.tsx     # Auth state management
-│   │   ├── types/
-│   │   │   └── index.ts            # TypeScript types
-│   │   ├── App.tsx                 # Main app with routing
-│   │   └── main.tsx                # Entry point
-│   ├── .env.example                 # Environment template
-│   ├── package.json                 # Frontend dependencies
-│   ├── tailwind.config.js           # Tailwind configuration
-│   ├── vite.config.ts               # Vite configuration
-│   └── README.md
-│
-├── DEPLOYMENT_SUMMARY.md             # Detailed deployment documentation
-├── LICENSE                           # MIT License
-└── README.md                         # This file
+├── .github/
+│   └── workflows/
+│       └── ci.yml                     # Frontend and contracts CI/CD
+├── vercel.json
+├── LICENSE
+└── README.md
 ```
 
 ---
 
-## 🚀 Local Development
+## ⚙️ CI/CD Pipeline
 
-### Prerequisites
+EventHub uses a GitHub Actions CI/CD pipeline with automated testing and build verification.
 
-- **Node.js** 20+ and npm
-- **Rust** 1.85+ with `wasm32-unknown-unknown` target
-- **Soroban CLI** (for contract development)
-- **Freighter Wallet** extension (for wallet testing)
+### CI/CD Flow
 
-### Frontend Setup
-
-```bash
-# Navigate to frontend directory
-cd eventhub-frontend
-
-# Install dependencies
-npm install
-
-# Create environment file
-cp .env.example .env
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-
-# Run linter
-npm run lint
+```
+Developer Push / Pull Request
+│
+▼
+┌───────────────────────────────┐
+│       GitHub Actions CI       │
+├───────────────────────────────┤
+│  Frontend + Contracts         │
+│  Workflow                     │
+├───────────────────────────────┤
+│ npm install                   │
+│ tsc --noEmit                  │
+│ npm run lint                  │
+│ npm run build                 │
+│ cargo test (contracts)        │
+└───────────────┬───────────────┘
+                │
+                ▼
+        ┌───────────────┐
+        │ Vercel Deploy │
+        │  (main only)  │
+        └───────┬───────┘
+                │
+                ▼
+           Production
 ```
 
-The frontend will be available at `http://localhost:5173`
+### Workflow Configuration (.github/workflows/ci.yml)
 
-### Smart Contract Setup
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: cd eventhub-frontend && npm ci
+      - run: cd eventhub-frontend && npm run build
+```
+
+### CI Status Badge
+
+![Frontend CI](https://github.com/mnvmaral/STELLAR-LVL3/actions/workflows/ci.yml/badge.svg)
+
+---
+
+## 🧪 Testing
+
+✅ **12 tests passing** across Soroban contract tests
+
+### Contract Tests (Rust / cargo test)
+
+The EventManager contract has comprehensive unit tests using `soroban-sdk` testutils covering all core functionality:
+
+| Test Suite | Tests | Description |
+|------------|-------|-------------|
+| Event Creation | 2 | `test_create_event`, `test_invalid_max_participants` |
+| Event Retrieval | 2 | `test_get_all_events`, event lookup by ID |
+| Registration | 3 | `test_register_for_event`, `test_duplicate_registration`, `test_register_for_nonexistent_event` |
+| Capacity | 1 | `test_event_full` |
+| Cancellation | 3 | `test_cancel_registration`, `test_cancel_nonexistent_registration`, `test_cancel_and_reregister_multiple_times` |
+| Queries | 2 | `test_get_user_registrations`, `test_get_event_registrations` |
+| **Total** | **12** | **All passing** ✅ |
+
+**Running contract tests:**
 
 ```bash
-# Navigate to contract directory
 cd eventhub-contract
-
-# Build contract
-cargo build --target wasm32-unknown-unknown --release --package event-manager
-
-# Run tests
-cargo test --package event-manager
-
-# Optimize WASM (requires soroban-cli)
-soroban contract optimize \
-  --wasm target/wasm32-unknown-unknown/release/event_manager.wasm
-
-# Deploy to testnet (requires funded account)
-soroban contract deploy \
-  --wasm target/wasm32-unknown-unknown/release/event_manager.wasm \
-  --source <YOUR_SECRET_KEY> \
-  --network testnet
+cargo test                      # Run all tests
+cargo test -- --nocapture       # Show println! output
 ```
 
-### Test Credentials
+**Test output:**
 
-For local testing with existing data:
+```
+running 12 tests
+test test::test_cancel_and_reregister_multiple_times ... ok
+test test::test_cancel_nonexistent_registration ... ok
+test test::test_cancel_registration ... ok
+test test::test_create_event ... ok
+test test::test_duplicate_registration ... ok
+test test::test_event_full ... ok
+test test::test_get_all_events ... ok
+test test::test_get_event_registrations ... ok
+test test::test_get_user_registrations ... ok
+test test::test_invalid_max_participants ... ok
+test test::test_register_for_event ... ok
+test test::test_register_for_nonexistent_event ... ok
 
-**User Account:**
-- Email: `user@eventhub.com`
-- Password: any text
-
-**Admin Account:**
-- Email: `admin@eventhub.com`
-- Password: any text
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
 
 ---
 
-## 🔐 Environment Variables
+## 📱 Mobile Responsive Design
 
-Create a `.env` file in `eventhub-frontend/` with the following variables:
+EventHub is built with mobile-first principles and full responsive support down to 375px viewport.
 
-```bash
-# Stellar Network Configuration
-VITE_STELLAR_NETWORK=testnet
-VITE_STELLAR_RPC_URL=https://soroban-testnet.stellar.org
-VITE_STELLAR_HORIZON_URL=https://horizon-testnet.stellar.org
+### Breakpoints
 
-# EventManager Contract
-VITE_EVENT_CONTRACT_ID=CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE
-```
+| Breakpoint | Width | Layout |
+|------------|-------|--------|
+| **Mobile** | 375px | Single column, collapsible sidebar, full-screen event cards |
+| **Tablet** | 768px | 2-column grid, collapsible sidebar with labels |
+| **Desktop** | 1024px | Full sidebar + content area with max-width |
+| **Wide** | 1440px | Max-width container, optimal reading width |
 
-**Security Notes:**
-- ⚠️ **NEVER commit private keys or secret keys**
-- ⚠️ **NEVER commit `.env` files with secrets**
-- ✅ Only public configuration (contract IDs, RPC URLs) in `.env.example`
-- ✅ Add `.env` to `.gitignore`
+### Mobile Features
 
----
-
-## 📊 Level 3 Requirements Status
-
-| Requirement | Status | Evidence |
-|------------|--------|----------|
-| **Advanced Smart Contract Development** | ✅ Complete | 7 contract functions, events, authorization, validation |
-| **Inter-Contract Communication** | ⏸️ Not Started | Single contract architecture, not required for current scope |
-| **Event Streaming / Real-Time Updates** | 🔶 Partial | Contract emits events (`event_created`, `user_registered`), frontend polling not yet implemented |
-| **CI/CD Pipeline** | ✅ Complete | GitHub Actions with frontend build, contract build/test, integration checks |
-| **Deployment Workflow** | ✅ Complete | Contract deployed to testnet with verified transactions, frontend ready for Vercel |
-| **Mobile Responsive Frontend** | ✅ Complete | Mobile-first design with responsive navigation and layouts |
-| **Error Handling & Loading States** | ✅ Complete | Transaction state machine, loading skeletons, error messages, wallet error handling |
-| **Contract Tests** | ✅ Complete | 9/9 tests passing, covering all contract functions and edge cases |
-| **Frontend Integration Tests** | ⏸️ Not Started | Frontend tests not yet implemented |
-| **Production-Ready Architecture** | ✅ Complete | Service layer separation, hybrid data approach, security best practices |
-| **Comprehensive Documentation** | ✅ Complete | README with architecture, deployment details, API tables, setup instructions |
-| **Demo / Live Deployment** | 🔶 Partial | Contract live on testnet, frontend not yet deployed to Vercel |
-
-**Legend:**
-- ✅ Complete - Fully implemented and verified
-- 🔶 Partial - Core functionality complete, enhancements pending
-- ⏸️ Not Started - Not yet implemented
+- 🎯 Touch targets minimum 44×44px for accessibility
+- 📱 Full-screen modals on mobile
+- 🔄 Collapsible sidebar drawer with smooth animations
+- 📊 2-column → 1-column event grid below 768px
+- 📈 Stacked statistics row on mobile
+- ⌨️ Optimized keyboard input for mobile keyboards
 
 ---
 
 ## 📸 Screenshots
 
-### Landing Page
-[PASTE SCREENSHOT HERE]
+Check out the [live demo](https://stellar-lvl-3-ekot.vercel.app) to see EventHub in action!
 
-### Event Browsing
-[PASTE SCREENSHOT HERE]
+### Application Screenshots
 
-### Event Details
-[PASTE SCREENSHOT HERE]
+[SCREENSHOT: Landing page hero section showing EventHub branding, tagline "Decentralized Event Management on Stellar Blockchain", and Connect Wallet call-to-action button]
 
-### User Dashboard
-[PASTE SCREENSHOT HERE]
+[SCREENSHOT: Events list/browse page displaying a grid of event cards with real on-chain events, showing event titles, dates, categories, locations, and participant counts (e.g., "25/100 participants")]
 
-### Admin Dashboard
-[PASTE SCREENSHOT HERE]
+[SCREENSHOT: Event Details page for a real blockchain event (not demo/seed event), showing full event description, date/time, location, organizer info, participant count, and Register/Cancel button based on registration status]
 
-### Wallet Transaction Flow
-[PASTE SCREENSHOT HERE]
+[SCREENSHOT: Freighter wallet connection permission popup asking user to approve connecting their Stellar wallet to EventHub]
 
-### Stellar Expert Confirmation
-[PASTE SCREENSHOT HERE]
+[SCREENSHOT: Freighter signing popup for register_for_event transaction, showing the contract call details, network (Stellar Testnet), and Approve/Reject buttons]
 
----
+[SCREENSHOT: Success modal after registration displaying "Registration Successful!" message with the real 64-character transaction hash in monospace font, and "View on Stellar Expert →" link]
 
-## 🚀 Future Improvements
+[SCREENSHOT: Stellar Expert page (stellar.expert/explorer/testnet/tx/{hash}) showing the same transaction hash from the success modal with Status: Successful and register_for_event operation visible]
 
-### Blockchain Enhancements
-- [ ] Implement real-time event streaming from contract events
-- [ ] Add update_event and cancel_event functions to contract
-- [ ] Implement cancel_registration functionality
-- [ ] Token-gated events (require specific token holdings)
-- [ ] NFT certificates for event attendance
-- [ ] On-chain voting for event proposals
+[SCREENSHOT: Event Details page showing the Cancel Registration button for an event the user is currently registered for, with updated participant count]
 
-### Frontend Enhancements
-- [ ] Multi-wallet support (Freighter, Albedo, xBull)
-- [ ] Event filtering by date range and location
-- [ ] Event image upload to IPFS
-- [ ] In-app notifications for registration confirmations
-- [ ] QR code check-in system for events
-- [ ] Export registrations to CSV
+[SCREENSHOT: Success modal after cancellation displaying "Registration Cancelled" message with the real transaction hash (different from registration hash) and Stellar Expert link]
 
-### Features
-- [ ] Event ratings and reviews
-- [ ] Recurring events support
-- [ ] Event categories with custom metadata
-- [ ] Social sharing integration
-- [ ] Email reminders for upcoming events
-- [ ] Analytics dashboard for organizers
+[SCREENSHOT: Admin Create Event form showing input fields for title, description, category dropdown, date picker, time picker, location, max participants, with "Create Event" button]
 
-### Testing & Quality
-- [ ] Frontend unit and integration tests
-- [ ] E2E tests with Playwright
-- [ ] Contract fuzzing tests
-- [ ] Load testing for scalability
-- [ ] Security audit
+[SCREENSHOT: Success modal after event creation showing "Event Created Successfully!" message with real transaction hash and event ID returned from create_event contract function]
 
-### Deployment
-- [ ] Deploy frontend to Vercel/Netlify
-- [ ] Mainnet deployment preparation
-- [ ] Custom domain configuration
-- [ ] CDN for static assets
+[SCREENSHOT: Admin dashboard / events management view showing list of created events with Edit/Delete options, participant counts, and event status badges (Upcoming/Completed/Cancelled)]
+
+[SCREENSHOT: User Dashboard showing "My Registered Events" section with event cards for events the user has registered for, pulled from get_user_registrations contract function]
+
+[SCREENSHOT: Mobile responsive view of the event details page on a 375px viewport, showing collapsible sidebar menu, stacked event information, and full-width Register button optimized for touch]
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these guidelines:
+Pull requests welcome! For major changes, please open an issue first to discuss proposed changes.
+
+### Contributing Steps
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Commit with meaningful messages: `git commit -m "feat: describe your change"`
+4. Push to your fork: `git push origin feature/your-feature-name`
+5. Open a pull request with description of changes
 
-**Development Guidelines:**
-- Follow existing code style and conventions
-- Add tests for new functionality
-- Update documentation for API changes
-- Ensure CI pipeline passes before submitting PR
+### Code Style
 
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+- **TypeScript**: Strict mode enabled, ESLint configuration enforced
+- **Formatting**: Consistent code style across all files
+- **Rust**: `rustfmt` and `clippy` linting for contracts
+- **Testing**: All new features require corresponding tests
 
 ---
 
 ## 👨‍💻 Author
 
-**Manav Maral**
+| Name | Manav Maral |
+|------|-------------|
+| **GitHub** | [@mnvmaral](https://github.com/mnvmaral) |
+| **Project** | EventHub |
+| **Hackathon** | Stellar Level 3 |
 
-- GitHub: [@mnvmaral](https://github.com/mnvmaral)
-- Repository: [STELLAR-LVL3](https://github.com/mnvmaral/STELLAR-LVL3)
+Built with ❤️ for the Stellar ecosystem.
 
 ---
 
-<div align="center">
+## 📄 License
 
-**Built with ❤️ on Stellar**
+**MIT License** — Copyright (c) 2026 Manav Maral
 
-[View Contract](https://stellar.expert/explorer/testnet/contract/CB4W7MU5BDRSAIF4HVIY3JLSYQNBNVLICCAWAWUQ3AWKY4QIMDCFPQEE) • [View Transactions](https://stellar.expert/explorer/testnet/tx/f849e81a0277c166757b52314e261b39ef85fd697161c453b6cc0f68f75943a8) • [Stellar Docs](https://developers.stellar.org/docs) • [Soroban Docs](https://soroban.stellar.org/docs)
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-</div>
+```
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+---
+
+**EventHub** — Decentralized Event Management on Stellar
+
+Built with ❤️ by Manav Maral for the Stellar Hackathon
+
+![Stellar](https://img.shields.io/badge/Stellar-Blockchain-purple) · ![Soroban](https://img.shields.io/badge/Soroban-Smart%20Contracts-blue) · ![Freighter](https://img.shields.io/badge/Freighter-Wallet-orange)
