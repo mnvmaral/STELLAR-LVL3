@@ -3,11 +3,6 @@
 
 VERCEL DEPLOYMENT LINK: https://stellar-lvl-3-ekot.vercel.app
 
-Vercel Deployment SS : 
- 
-
-<img width="1447" height="840" alt="Screenshot 2026-08-31 at 1 18 27 AM" src="https://github.com/user-attachments/assets/95d9f6ac-c308-4701-a53c-675b12068a14" />
-
 
 **Decentralized Event Management on Stellar Blockchain**
 
@@ -29,6 +24,14 @@ Vercel Deployment SS :
 ![Last Commit](https://img.shields.io/github/last-commit/mnvmaral/STELLAR-LVL3)
 
 ---
+
+
+VERCEL DEPLOYMENT LINK: https://stellar-lvl-3-ekot.vercel.app
+
+Vercel Deployment SS : 
+ 
+
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 1 18 27 AM" src="https://github.com/user-attachments/assets/95d9f6ac-c308-4701-a53c-675b12068a14" />
 
 ## Table of Contents
 
