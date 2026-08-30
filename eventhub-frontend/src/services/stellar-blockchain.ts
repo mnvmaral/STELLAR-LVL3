@@ -6,8 +6,21 @@ const CONTRACT_ID = import.meta.env.VITE_EVENT_CONTRACT_ID;
 const RPC_URL = import.meta.env.VITE_STELLAR_RPC_URL;
 const NETWORK_PASSPHRASE = StellarSdk.Networks.TESTNET;
 
-// Create Soroban RPC server instance
-const server = new StellarSdk.rpc.Server(RPC_URL);
+// Lazy-initialize server to avoid crashes when env vars are missing
+let server: StellarSdk.rpc.Server | null = null;
+
+function getServer(): StellarSdk.rpc.Server {
+  if (!server) {
+    if (!RPC_URL) {
+      throw new Error('VITE_STELLAR_RPC_URL environment variable is not configured');
+    }
+    if (!CONTRACT_ID) {
+      throw new Error('VITE_EVENT_CONTRACT_ID environment variable is not configured');
+    }
+    server = new StellarSdk.rpc.Server(RPC_URL);
+  }
+  return server;
+}
 
 export class StellarBlockchainService {
   /**
@@ -22,7 +35,7 @@ export class StellarBlockchainService {
       const { address: organizerAddress } = await stellarWallet.ensureWalletReady();
 
       // Step 2: Load the source account
-      const sourceAccount = await server.getAccount(organizerAddress);
+      const sourceAccount = await getServer().getAccount(organizerAddress);
       
       // Step 3: Build the contract call operation
       const contract = new StellarSdk.Contract(CONTRACT_ID);
@@ -48,7 +61,7 @@ export class StellarBlockchainService {
         .build();
 
       // Step 4: Simulate the transaction
-      const simulatedTx = await server.simulateTransaction(transaction);
+      const simulatedTx = await getServer().simulateTransaction(transaction);
       
       if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         throw new Error(`Simulation failed: ${simulatedTx.error}`);
@@ -68,7 +81,7 @@ export class StellarBlockchainService {
       ) as StellarSdk.Transaction;
 
       // Step 7: Submit the transaction
-      const sendResponse = await server.sendTransaction(signedTx);
+      const sendResponse = await getServer().sendTransaction(signedTx);
       
       if (sendResponse.status === 'ERROR') {
         throw new Error(`Transaction failed: ${sendResponse.errorResult}`);
@@ -76,13 +89,13 @@ export class StellarBlockchainService {
 
       // Step 8: Poll for transaction result
       const hash = sendResponse.hash;
-      let getResponse = await server.getTransaction(hash);
+      let getResponse = await getServer().getTransaction(hash);
       let attempts = 0;
       const maxAttempts = 30;
 
       while (getResponse.status === StellarSdk.rpc.Api.GetTransactionStatus.NOT_FOUND && attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 1000));
-        getResponse = await server.getTransaction(hash);
+        getResponse = await getServer().getTransaction(hash);
         attempts++;
       }
 
@@ -133,7 +146,7 @@ export class StellarBlockchainService {
       const { address: participantAddress } = await stellarWallet.ensureWalletReady();
 
       // Step 2: Load the source account
-      const sourceAccount = await server.getAccount(participantAddress);
+      const sourceAccount = await getServer().getAccount(participantAddress);
       
       // Step 3: Build the contract call
       const contract = new StellarSdk.Contract(CONTRACT_ID);
@@ -153,7 +166,7 @@ export class StellarBlockchainService {
         .build();
 
       // Step 4: Simulate the transaction
-      const simulatedTx = await server.simulateTransaction(transaction);
+      const simulatedTx = await getServer().simulateTransaction(transaction);
       
       if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         const error = simulatedTx.error;
@@ -179,7 +192,7 @@ export class StellarBlockchainService {
       ) as StellarSdk.Transaction;
 
       // Step 7: Submit the transaction
-      const sendResponse = await server.sendTransaction(signedTx);
+      const sendResponse = await getServer().sendTransaction(signedTx);
       
       if (sendResponse.status === 'ERROR') {
         throw new Error(`Transaction failed: ${sendResponse.errorResult}`);
@@ -187,13 +200,13 @@ export class StellarBlockchainService {
 
       // Step 8: Poll for result
       const hash = sendResponse.hash;
-      let getResponse = await server.getTransaction(hash);
+      let getResponse = await getServer().getTransaction(hash);
       let attempts = 0;
       const maxAttempts = 30;
 
       while (getResponse.status === StellarSdk.rpc.Api.GetTransactionStatus.NOT_FOUND && attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 1000));
-        getResponse = await server.getTransaction(hash);
+        getResponse = await getServer().getTransaction(hash);
         attempts++;
       }
 
@@ -244,7 +257,7 @@ export class StellarBlockchainService {
       const { address: participantAddress } = await stellarWallet.ensureWalletReady();
 
       // Step 2: Load the source account
-      const sourceAccount = await server.getAccount(participantAddress);
+      const sourceAccount = await getServer().getAccount(participantAddress);
       
       // Step 3: Build the contract call
       const contract = new StellarSdk.Contract(CONTRACT_ID);
@@ -264,7 +277,7 @@ export class StellarBlockchainService {
         .build();
 
       // Step 4: Simulate the transaction
-      const simulatedTx = await server.simulateTransaction(transaction);
+      const simulatedTx = await getServer().simulateTransaction(transaction);
       
       if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         const error = simulatedTx.error;
@@ -288,7 +301,7 @@ export class StellarBlockchainService {
       ) as StellarSdk.Transaction;
 
       // Step 7: Submit the transaction
-      const sendResponse = await server.sendTransaction(signedTx);
+      const sendResponse = await getServer().sendTransaction(signedTx);
       
       if (sendResponse.status === 'ERROR') {
         throw new Error(`Transaction failed: ${sendResponse.errorResult}`);
@@ -296,13 +309,13 @@ export class StellarBlockchainService {
 
       // Step 8: Poll for result
       const hash = sendResponse.hash;
-      let getResponse = await server.getTransaction(hash);
+      let getResponse = await getServer().getTransaction(hash);
       let attempts = 0;
       const maxAttempts = 30;
 
       while (getResponse.status === StellarSdk.rpc.Api.GetTransactionStatus.NOT_FOUND && attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 1000));
-        getResponse = await server.getTransaction(hash);
+        getResponse = await getServer().getTransaction(hash);
         attempts++;
       }
 
@@ -358,7 +371,7 @@ export class StellarBlockchainService {
         .setTimeout(30)
         .build();
 
-      const simulatedTx = await server.simulateTransaction(transaction);
+      const simulatedTx = await getServer().simulateTransaction(transaction);
       
       if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         console.error('Failed to fetch events:', simulatedTx.error);
@@ -417,7 +430,7 @@ export class StellarBlockchainService {
         .setTimeout(30)
         .build();
 
-      const simulatedTx = await server.simulateTransaction(transaction);
+      const simulatedTx = await getServer().simulateTransaction(transaction);
       
       if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         return null;
@@ -476,7 +489,7 @@ export class StellarBlockchainService {
         .setTimeout(30)
         .build();
 
-      const simulatedTx = await server.simulateTransaction(transaction);
+      const simulatedTx = await getServer().simulateTransaction(transaction);
       
       if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         return false;
@@ -517,7 +530,7 @@ export class StellarBlockchainService {
         .setTimeout(30)
         .build();
 
-      const simulatedTx = await server.simulateTransaction(transaction);
+      const simulatedTx = await getServer().simulateTransaction(transaction);
       
       if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         return [];
@@ -558,7 +571,7 @@ export class StellarBlockchainService {
         .setTimeout(30)
         .build();
 
-      const simulatedTx = await server.simulateTransaction(transaction);
+      const simulatedTx = await getServer().simulateTransaction(transaction);
       
       if (StellarSdk.rpc.Api.isSimulationError(simulatedTx)) {
         return [];
