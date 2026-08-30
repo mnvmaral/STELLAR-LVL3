@@ -1,14 +1,10 @@
 # EventHub
 
-Deployment
-stellar-lvl-3-ekot-9iexff95z-builders-1172.vercel.app
-Domains
-stellar-lvl-3-ekot.vercel.app   
 
-VERCEL DEPLOYMENT LINK: Live Demo⁠￼ | Alternative Deployment⁠￼ 
+VERCEL DEPLOYMENT LINK: https://stellar-lvl-3-ekot.vercel.app
 
 Vercel Deployment SS : 
-
+ 
 
 <img width="1447" height="840" alt="Screenshot 2026-08-31 at 1 18 27 AM" src="https://github.com/user-attachments/assets/95d9f6ac-c308-4701-a53c-675b12068a14" />
 
