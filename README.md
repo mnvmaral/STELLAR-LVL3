@@ -1,6 +1,8 @@
 # EventHub
 
-**VERCEL DEPLOYMENT LINK:** https://stellar-lvl-3-ekot.vercel.app
+
+VERCEL DEPLOYMENT LINK: https://stellar-lvl-3-ekot.vercel.app
+
 
 **Decentralized Event Management on Stellar Blockchain**
 
@@ -22,6 +24,14 @@
 ![Last Commit](https://img.shields.io/github/last-commit/mnvmaral/STELLAR-LVL3)
 
 ---
+
+
+VERCEL DEPLOYMENT LINK: https://stellar-lvl-3-ekot.vercel.app
+
+Vercel Deployment SS : 
+ 
+
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 1 18 27 AM" src="https://github.com/user-attachments/assets/95d9f6ac-c308-4701-a53c-675b12068a14" />
 
 ## Table of Contents
 
@@ -188,6 +198,8 @@ The EventManager contract is the single source of truth for events and registrat
 ---
 
 ## 🚀 Contract Deployment
+  ## CONTRACT DEPLOYMENT SS : 
+  <img width="1447" height="840" alt="Screenshot 2026-08-20 at 10 37 15 PM" src="https://github.com/user-attachments/assets/df98f25f-1fb5-4572-a10d-94a6f3995b44" />
 
 ### Deployed Contract (Stellar Testnet)
 
@@ -658,35 +670,45 @@ Check out the [live demo](https://stellar-lvl-3-ekot.vercel.app) to see EventHub
 
 ### Application Screenshots
 
-[SCREENSHOT: Landing page hero section showing EventHub branding, tagline "Decentralized Event Management on Stellar Blockchain", and Connect Wallet call-to-action button]
 
-[SCREENSHOT: Events list/browse page displaying a grid of event cards with real on-chain events, showing event titles, dates, categories, locations, and participant counts (e.g., "25/100 participants")]
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 41 13 AM" src="https://github.com/user-attachments/assets/131507b4-4278-4999-9b47-30e158c319a1" />
 
-[SCREENSHOT: Event Details page for a real blockchain event (not demo/seed event), showing full event description, date/time, location, organizer info, participant count, and Register/Cancel button based on registration status]
 
-[SCREENSHOT: Freighter wallet connection permission popup asking user to approve connecting their Stellar wallet to EventHub]
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 41 23 AM" src="https://github.com/user-attachments/assets/17e3cd3a-71c9-4849-97f7-7bdc769aa1e4" />
 
-[SCREENSHOT: Freighter signing popup for register_for_event transaction, showing the contract call details, network (Stellar Testnet), and Approve/Reject buttons]
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 41 23 AM" src="https://github.com/user-attachments/assets/94e0d016-3017-472c-b022-4226bab8e709" />
 
-[SCREENSHOT: Success modal after registration displaying "Registration Successful!" message with the real 64-character transaction hash in monospace font, and "View on Stellar Expert →" link]
 
-[SCREENSHOT: Stellar Expert page (stellar.expert/explorer/testnet/tx/{hash}) showing the same transaction hash from the success modal with Status: Successful and register_for_event operation visible]
+<img width="1447" height="840" alt="Screenshot 2026-08-26 at 8 16 47 PM" src="https://github.com/user-attachments/assets/89d8c76a-ac31-468c-9de1-87f636ff6e1b" />
 
-[SCREENSHOT: Event Details page showing the Cancel Registration button for an event the user is currently registered for, with updated participant count]
 
-[SCREENSHOT: Success modal after cancellation displaying "Registration Cancelled" message with the real transaction hash (different from registration hash) and Stellar Expert link]
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 35 38 AM" src="https://github.com/user-attachments/assets/e303cccc-c8f5-46ec-a2ed-61c50c0e5bf8" />
 
-[SCREENSHOT: Admin Create Event form showing input fields for title, description, category dropdown, date picker, time picker, location, max participants, with "Create Event" button]
 
-[SCREENSHOT: Success modal after event creation showing "Event Created Successfully!" message with real transaction hash and event ID returned from create_event contract function]
 
-[SCREENSHOT: Admin dashboard / events management view showing list of created events with Edit/Delete options, participant counts, and event status badges (Upcoming/Completed/Cancelled)]
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 42 15 AM" src="https://github.com/user-attachments/assets/1a15d61d-d196-4c14-aff3-bcf97e24fcde" />
 
-[SCREENSHOT: User Dashboard showing "My Registered Events" section with event cards for events the user has registered for, pulled from get_user_registrations contract function]
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 41 33 AM" src="https://github.com/user-attachments/assets/73632568-f96a-4551-b923-9cee383ce3be" />
 
-[SCREENSHOT: Mobile responsive view of the event details page on a 375px viewport, showing collapsible sidebar menu, stacked event information, and full-width Register button optimized for touch]
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 41 58 AM" src="https://github.com/user-attachments/assets/b7d1a0b3-7e50-42ad-8ce2-c62441a18855" />
+
+
+
+** ADMIN SECTION :
+
+
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 42 44 AM" src="https://github.com/user-attachments/assets/e8ba498a-c534-4e6f-b42f-74ea6a2c4dcf" />
+
+
+<img width="1447" height="840" alt="Screenshot 2026-08-31 at 12 43 00 AM" src="https://github.com/user-attachments/assets/8ba39a8c-4638-4068-8c20-004570f2dc25" />
+
+
+
+
 
 ---
+
+
 
 ## 🤝 Contributing
 
